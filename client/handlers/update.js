@@ -3,20 +3,28 @@
 
     const config = require('json-cfg').trunk;
     const http = require('http');
-    const fs = require('fs');
-    const { workingRoot } = config.conf.runtime;
-    const { host, port, fileDir: srcDir } = config.conf.server;
-    const { fileDir: distDir } = config.conf.client;
-    const downloadUrl = `http://${host}:${port}/${srcDir}`;
-    const distPath = `${workingRoot}/${distDir}`;
+    const fs = require('fs-extra');
+    const { host, port, filePath: srcPath } = config.conf.server;
+    const { filePath: distPath } = config.conf.client;
+    const downloadUrl = `http://${host}:${port}/${srcPath}`;
 
     module.exports = (fileName) => {
-        let writeFile = fs.createWriteStream(`${distPath}/${fileName}`);
+        let writeFilePath = `${distPath}/__pack_${new Date().getTime()}`;
+        fs.mkdirSync(writeFilePath, { recursive: true });
         http
         .get(`${downloadUrl}/${fileName}`, (res) => {
+            // rm -rf writeFilePath
+            if (res.statusCode === 404) {
+                fs.removeSync(writeFilePath);
+                console.error('File path error');
+                return;
+            }
+
+            let writeFile = fs.createWriteStream(`${writeFilePath}/${fileName}`);
             res.pipe(writeFile);
             writeFile.on('finish', () => {
                 writeFile.close();
+                console.log('System update finish');
             });
         });
     };

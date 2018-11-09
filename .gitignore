@@ -1,6 +1,6 @@
 .vscode
 .init
 node_modules
-files
+file
 package-lock.json
 config.json

@@ -3,7 +3,7 @@
 
     require('../prepenv.js');
     const config = require('json-cfg').trunk;
-    const fs = require('fs');
+    const fs = require('fs-extra');
     const http = require('http');
     const WebSocket = require('ws');
     const { exec } = require('child_process');
@@ -32,7 +32,8 @@
     // check init
     let initFilePath = `${workingRoot}/.init`;
     if (!fs.existsSync(initFilePath)) {
-        init();
+        // init();
+        run();
     }
     else {
         run();

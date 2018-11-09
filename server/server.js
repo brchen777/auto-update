@@ -10,21 +10,20 @@
     const pitaya = require('pitayajs');
 
     const __handlers = {
-        GET: {
+        get: {
             '/init': require('./res/get/init'),
-            '/files': require('./res/get/files')
+            '/file': require('./res/get/file')
         },
-        POST: {
-        },
-        ERROR404: require('./res/error/404')
+        error404: require('./res/error/404')
     };
 
     const httpServer = http.createServer((req, res) => {
-        let handlerGroup = __handlers[req.method] || {};
+        let method = req.method.toLowerCase();
+        let handlerGroup = __handlers[method] || {};
         let { comp: dispatch, url } = pitaya.net.HTTPPullPathComp(req.url);
         let handler = handlerGroup[dispatch];
         if (handler === undefined) {
-            return __handlers.ERROR404(req, res, true);
+            return __handlers.error404(req, res, true);
         }
 
         return handler(req, res, url);
