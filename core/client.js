@@ -43,6 +43,7 @@
                 for (let command of __commands['echo_dhcp'](ip)) {                
                     exec(command);
                 }
+                exec(__commands.touch_init);
                 // exec(__commands.reboot);
             });
         })
