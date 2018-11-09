@@ -17,11 +17,12 @@
                 'sudo echo "fallback static_eth0"       >> /etc/dhcpcd.conf'
             ];
         },
+        touch_init: 'sudo touch .init',
         reboot: 'sudo reboot'
     };
 
     // check init
-    let initFilePath = `${config.conf.workingRoot}/init`;
+    let initFilePath = `${config.conf.workingRoot}/.init`;
     if (!fs.existsSync(initFilePath)) {
         init();
     }

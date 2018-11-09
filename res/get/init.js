@@ -1,7 +1,7 @@
 (() => {
     'use strict';
 
-    require('../prepenv.js');
+    require('../../prepenv.js');
     const config = require('json-cfg').trunk;
     const { host } = config.conf.client;
     
