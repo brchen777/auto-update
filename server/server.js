@@ -1,4 +1,4 @@
-(() => {
+(async () => {
     'use strict';
 
     require('../prepenv.js');
@@ -11,11 +11,12 @@
 
     const __handlers = {
         GET: {
-            '/init': require('../res/get/init')
+            '/init': require('./res/get/init'),
+            '/files': require('./res/get/files')
         },
         POST: {
         },
-        ERROR404: require('../res/error/404')
+        ERROR404: require('./res/error/404')
     };
 
     const httpServer = http.createServer((req, res) => {
@@ -27,9 +28,18 @@
         }
 
         return handler(req, res, url);
-    }).listen(port, host);
-    const wss = new WebSocket.Server({ server: httpServer });
+    });
+    httpServer.listen(port, host);
 
-    const msg = 'message';
-    repl.start('> ').context.update = msg;
+    const wsServer = await new WebSocket.Server({ server: httpServer });
+    wsServer.broadcast = (data) => {
+        wsServer.clients.forEach((client) => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(data);
+            }
+        });
+    };
+
+    const __update = require('./repl/update')(wsServer.broadcast, '__system_update');
+    repl.start('> ').context.update = __update;
 })();

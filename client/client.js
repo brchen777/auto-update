@@ -3,14 +3,17 @@
 
     require('../prepenv.js');
     const config = require('json-cfg').trunk;
-    const { workingRoot } = config.conf.runtime;
-    const { host, port } = config.conf.server;
     const fs = require('fs');
     const http = require('http');
+    const WebSocket = require('ws');
     const { exec } = require('child_process');
+    const { host, port } = config.conf.server;
+    const { workingRoot } = config.conf.runtime;
+    const initUrl = `http://${host}:${port}/init`;
+    const wsUrl = `ws://${host}:${port}`;
 
     const __commands = {
-        echo_dhcp: (ip) => {
+        echoDhcp: (ip) => {
             return [
                 'sudo echo "profile static_eth0"        >> /etc/dhcpcd.conf',
                 `sudo echo "static ip_address=${ip}/24" >> /etc/dhcpcd.conf`,
@@ -18,8 +21,12 @@
                 'sudo echo "fallback static_eth0"       >> /etc/dhcpcd.conf'
             ];
         },
-        touch_init: 'sudo touch .init',
+        touchInit: 'sudo touch .init',
         reboot: 'sudo reboot'
+    };
+
+    const __handlers = {
+        __system_update: require('./handlers/update')
     };
 
     // check init
@@ -32,8 +39,10 @@
     }
     
     function init() {
+        console.log('Client init...');
+        
         http
-        .get(`http://${host}:${port}/init`, (res) => {
+        .get(initUrl, (res) => {
             let data = '';
             res
             .on('data', (chunk) => {
@@ -41,21 +50,28 @@
             })
             .on('end', () => {
                 let ip = JSON.parse(data).ip;
-                for (let command of __commands['echo_dhcp'](ip)) {
+                for (let command of __commands['echoDhcp'](ip)) {
                     exec(command);
                 }
-                exec(__commands.touch_init);
+                exec(__commands.touchInit);
                 // exec(__commands.reboot);
             });
         })
         .on('error', (e) => {
             console.error(`Got error: ${e.message}`);
         });
-
-        console.log('client init');
     }
 
     function run() {
-        console.log('client running');
+        console.log('Client running...');
+
+        const ws = new WebSocket(wsUrl);
+        ws.on('message', (data) => {
+            let { eventName, args } = JSON.parse(data);
+            let handler = __handlers[eventName] || {};
+            if (handler !== undefined) {
+                handler(...args);
+            }
+        });
     }
 })();

@@ -5,8 +5,10 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "server": "node --experimental-repl-await ./core/server.js",
-        "client": "node ./core/client.js"
+        "server": "node --experimental-repl-await ./server/server.js",
+        "client": "node ./client/client.js",
+        "server-inspect": "node --experimental-repl-await --inspect-brk=6543 ./server/server.js",
+        "client-inspect": "node --inspect-brk=6543 ./client/client.js"
     },
     "author": "",
     "license": "ISC",
