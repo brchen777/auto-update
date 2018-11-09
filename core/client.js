@@ -3,6 +3,7 @@
 
     require('../prepenv.js');
     const config = require('json-cfg').trunk;
+    const { workingRoot } = config.conf.runtime;
     const { host, port } = config.conf.server;
     const fs = require('fs');
     const http = require('http');
@@ -22,7 +23,7 @@
     };
 
     // check init
-    let initFilePath = `${config.conf.workingRoot}/.init`;
+    let initFilePath = `${workingRoot}/.init`;
     if (!fs.existsSync(initFilePath)) {
         init();
     }
@@ -40,7 +41,7 @@
             })
             .on('end', () => {
                 let ip = JSON.parse(data).ip;
-                for (let command of __commands['echo_dhcp'](ip)) {                
+                for (let command of __commands['echo_dhcp'](ip)) {
                     exec(command);
                 }
                 exec(__commands.touch_init);
