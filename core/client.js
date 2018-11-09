@@ -4,6 +4,7 @@
     require('../prepenv.js');
     const config = require('json-cfg').trunk;
     const { host, port } = config.conf.server;
+    const fs = require('fs');
     const http = require('http');
     const { exec } = require('child_process');
 
@@ -19,22 +20,39 @@
         reboot: 'sudo reboot'
     };
 
-    http
-    .get(`http://${host}:${port}/init`, (res) => {
-        let data = '';
-        res
-        .on('data', (chunk) => {
-            data += chunk;
+    // check init
+    let initFilePath = `${config.conf.workingRoot}/init`;
+    if (!fs.existsSync(initFilePath)) {
+        init();
+    }
+    else {
+        run();
+    }
+    
+    function init() {
+        http
+        .get(`http://${host}:${port}/init`, (res) => {
+            let data = '';
+            res
+            .on('data', (chunk) => {
+                data += chunk;
+            })
+            .on('end', () => {
+                let ip = JSON.parse(data).ip;
+                for (let command of __commands['echo_dhcp'](ip)) {                
+                    exec(command);
+                }
+                // exec(__commands.reboot);
+            });
         })
-        .on('end', () => {
-            let ip = JSON.parse(data).ip;
-            for (let command of __commands['echo_dhcp'](ip)) {                
-                exec(command);
-            }
-            // exec(__commands.reboot);
+        .on('error', (e) => {
+            console.error(`Got error: ${e.message}`);
         });
-    })
-    .on('error', (e) => {
-        console.error(`Got error: ${e.message}`);
-    });
+
+        console.log('client init');
+    }
+
+    function run() {
+        console.log('client running');
+    }
 })();
