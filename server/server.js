@@ -3,6 +3,7 @@
 
     require('../prepenv.js');
     const config = require('json-cfg').trunk;
+
     const { host, port } = config.conf.server;
     const repl = require('repl');
     const http = require('http');
@@ -39,6 +40,12 @@
         });
     };
 
-    const __update = require('./repl/update')(wsServer.broadcast, '__system_update');
-    repl.start('> ').context.update = __update;
+    let __repl = repl.start('> ');
+    __repl.context.update = require('./repl/update')(wsServer.broadcast, '__system_update');
+    __repl.context.zip = require('./repl/zip');
+
+    // test code
+    // wsServer.on('connection', () => {
+    //     wsServer.broadcast(JSON.stringify({ eventName: '__system_update', args: ['file.tar.gz'] }));
+    // });
 })();
