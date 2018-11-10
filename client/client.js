@@ -10,7 +10,7 @@
     const { COMMAND } = require('../lib/constants');
 
     const { host, port } = config.conf.server;
-    const { workingRoot } = config.conf.runtime;
+    const { initFlagPath } = config.conf.client;
     const initUrl = `http://${host}:${port}/init`;
     const wsUrl = `ws://${host}:${port}`;
 
@@ -18,9 +18,8 @@
         __system_update: require('./handlers/update')
     };
 
-    // check init
-    let initFilePath = `${workingRoot}/__init`;
-    if (!fs.existsSync(initFilePath)) {
+    // check client is initialized
+    if (!fs.existsSync(initFlagPath)) {
         init();
     }
     else {
