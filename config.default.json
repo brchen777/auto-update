@@ -1,12 +1,12 @@
 {
-	"server": {
-		"host": "192.168.0.253",
-		"port": 1234,
-		"filePath": "./file"
-	},
-	"client": {
-		"host": "192.168.0.1",
-		"port": 1234,
-		"filePath": "./file"
-	}
+    "server": {
+        "host": "192.168.0.253",
+        "port": 1234,
+        "filePath": "./file"
+    },
+    "client": {
+        "host": "192.168.0.1",
+        "port": 1234,
+        "filePath": "./file"
+    }
 }

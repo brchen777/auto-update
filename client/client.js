@@ -7,33 +7,21 @@
     const http = require('http');
     const WebSocket = require('ws');
     const { exec } = require('child_process');
+    const { COMMAND } = require('../lib/constants');
+
     const { host, port } = config.conf.server;
     const { workingRoot } = config.conf.runtime;
     const initUrl = `http://${host}:${port}/init`;
     const wsUrl = `ws://${host}:${port}`;
-
-    const __commands = {
-        echoDhcp: (ip) => {
-            return [
-                'sudo echo "profile static_eth0"        >> /etc/dhcpcd.conf',
-                `sudo echo "static ip_address=${ip}/24" >> /etc/dhcpcd.conf`,
-                'sudo echo "interface eth0"             >> /etc/dhcpcd.conf',
-                'sudo echo "fallback static_eth0"       >> /etc/dhcpcd.conf'
-            ];
-        },
-        touchInit: 'sudo touch .init',
-        reboot: 'sudo reboot'
-    };
 
     const __handlers = {
         __system_update: require('./handlers/update')
     };
 
     // check init
-    let initFilePath = `${workingRoot}/.init`;
+    let initFilePath = `${workingRoot}/__init`;
     if (!fs.existsSync(initFilePath)) {
-        // init();
-        run();
+        init();
     }
     else {
         run();
@@ -51,11 +39,12 @@
             })
             .on('end', () => {
                 let ip = JSON.parse(data).ip;
-                for (let command of __commands['echoDhcp'](ip)) {
+                let commands = COMMAND.SET_DHCP(ip);
+                for (let command of commands) {
                     exec(command);
                 }
-                exec(__commands.touchInit);
-                // exec(__commands.reboot);
+                exec(COMMAND.CREATE_INIT_FLAG(ip));
+                // exec(COMMAND.REBOOt);
             });
         })
         .on('error', (e) => {

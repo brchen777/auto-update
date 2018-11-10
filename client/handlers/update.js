@@ -5,11 +5,11 @@
     const http = require('http');
     const fs = require('fs-extra');
     const { host, port, filePath: srcPath } = config.conf.server;
-    const { filePath: distPath } = config.conf.client;
+    const { filePath: destPath } = config.conf.client;
     const downloadUrl = `http://${host}:${port}/${srcPath}`;
 
     module.exports = (fileName) => {
-        let writeFilePath = `${distPath}/__pack_${new Date().getTime()}`;
+        let writeFilePath = `${destPath}/__pack_${new Date().getTime()}`;
         fs.mkdirSync(writeFilePath, { recursive: true });
         http
         .get(`${downloadUrl}/${fileName}`, (res) => {

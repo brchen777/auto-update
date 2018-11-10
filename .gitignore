@@ -1,5 +1,5 @@
 .vscode
-.init
+__init
 node_modules
 file
 package-lock.json
