@@ -4,13 +4,16 @@
     require('../../../prepenv.js');
     const config = require('json-cfg').trunk;
     const fs = require('fs-extra');
+    const path = require('path');
+
+    const { workingRoot } = config.conf.runtime;
     const { filePath } = config.conf.server;
     const error404 =  require('../error/404');
     
     module.exports = (req, res, url) => {
-        let fileName = url.replace(/\//gi, '');
-        let readFilePath = `${filePath}/${fileName}`;
-        if (!fs.existsSync(readFilePath)) {
+        let fileName = (url) ? url.replace(/\//gi, '') : '';
+        let readFilePath = path.resolve(workingRoot, `${filePath}/${fileName}`);
+        if (fileName === '' || !fs.existsSync(readFilePath)) {
             error404(req, res, true);
             return;
         }

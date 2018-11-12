@@ -9,8 +9,8 @@
     const { exec } = require('child_process');
     const { COMMAND } = require('../lib/constants');
 
+    const { workingRoot } = config.conf.runtime;
     const { host, port } = config.conf.server;
-    const { initFlagPath } = config.conf.client;
     const initUrl = `http://${host}:${port}/init`;
     const wsUrl = `ws://${host}:${port}`;
 
@@ -19,6 +19,7 @@
     };
 
     // check client is initialized
+    let initFlagPath = `${workingRoot}/__init`;
     if (!fs.existsSync(initFlagPath)) {
         init();
     }
@@ -43,7 +44,7 @@
                     exec(command);
                 }
                 exec(COMMAND.CREATE_INIT_FLAG(ip));
-                // exec(COMMAND.REBOOt);
+                // exec(COMMAND.REBOOT);
             });
         })
         .on('error', (e) => {

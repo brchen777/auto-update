@@ -46,6 +46,6 @@
 
     // test code
     // wsServer.on('connection', () => {
-    //     wsServer.broadcast(JSON.stringify({ eventName: '__system_update', args: ['file.tar.gz'] }));
+    //     wsServer.broadcast(JSON.stringify({ eventName: '__system_update', args: ['test.tgz'] }));
     // });
 })();
