@@ -2,12 +2,18 @@
     "server": {
         "host": "192.168.0.253",
         "port": 1234,
-        "filePath": "./file"
+        "filePath": "./file/update",
+        "mongodb": {
+            "host": "192.168.0.253",
+            "port": 27017,
+            "dbName": "auto-update",
+            "colName": "node"
+        }
     },
     "client": {
         "host": "192.168.0.1",
         "port": 1234,
-        "filePath": "./file",
+        "filePath": "./file/download",
         "preCommand": ["sudo"]
     }
 }

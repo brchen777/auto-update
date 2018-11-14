@@ -1,7 +1,7 @@
 (() => {
     'use strict';
 
-    require('../../prepenv.js');
+    require('../../prepenv');
     const fs = require('fs-extra');
     const path = require('path');
     const config = require('json-cfg').trunk;
@@ -20,11 +20,11 @@
         return (fileName) => {
             let updateFilePath = path.resolve(workingRoot, `${destPath}/${fileName}`);
             if (!fs.existsSync(updateFilePath)) {
-                console.error('File path error');
+                console.error('* File path error');
                 return;
             }
 
-            console.log('System update');
+            console.log('* System update');
             handler(JSON.stringify({ eventName, args: [fileName] }));
         };
     };

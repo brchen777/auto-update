@@ -1,7 +1,7 @@
 (() => {
     'use strict';
 
-    const { exec } = require('child_process');
+    const { shell } = require('shelljs');
     const { COMMAND } = require('../../lib/constants');
 
     /** 
@@ -12,6 +12,6 @@
      * @returns
     */
     module.exports = (srcPath, destPath) => {
-        exec(COMMAND.ZIP_FILE(destPath), { cwd: srcPath });
+        shell.exec(COMMAND.ZIP_FILE(destPath), { cwd: srcPath });
     };
 })();

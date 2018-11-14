@@ -5,8 +5,7 @@
     const http = require('http');
     const fs = require('fs-extra');
     const path = require('path');
-    const util = require('util');
-    const exec = util.promisify(require('child_process').exec);
+    const shell = require('shelljs');
     const { COMMAND } = require('../../lib/constants');
 
     const { workingRoot } = config.conf.runtime;
@@ -24,7 +23,7 @@
             let writeFilePath = path.resolve(workingRoot, `${packPath}/${fileName}`);
             new Promise((resolve, reject) => {
                 // check response status code
-                (res.statusCode === 404) ? reject('File path error') : resolve(res);
+                (res.statusCode === 200) ? resolve(res) : reject('File path error');
             })
             .then((res) => {
                 // download package
@@ -33,26 +32,26 @@
                 let writeFile = fs.createWriteStream(writeFilePath);
                 res.pipe(writeFile);
                 writeFile.on('finish', () => {
-                    writeFile.close();
-                    console.log('Package download finish.');
+                    console.log('* Package download finish.');
                     writePrepared();
                 });
                 return writePromise;
             })
             .then(async () => {
                 // unzip
-                await exec(COMMAND.UNZIP_FILE(writeFilePath, contentPath));
-                console.log('Unzip finish.');
+                // await exec(COMMAND.UNZIP_FILE(writeFilePath, contentPath));
+                await shell.exec(COMMAND.UNZIP_FILE(writeFilePath, contentPath), { async: true });
+                console.log('* Unzip finish.');
             })
             .then(async () => {
                 // run shell script
                 let shFilePath = path.resolve(workingRoot, `${contentPath}/update.sh`);
-                const { stdout, stderr } = await exec(COMMAND.RUN_SH(shFilePath));
+                const { stdout, stderr } = await shell.exec(COMMAND.RUN_SH(shFilePath), { async: true });
                 if (stderr) {
-                    console.error('Stderr:', stderr);
+                    console.error('* Stderr:', stderr);
                 }
                 console.log(stdout);
-                console.log('Run shell script finish.');
+                console.log('* Run shell script finish.');
             })
             .catch((err) => {
                 // remove package directory
