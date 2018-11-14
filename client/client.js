@@ -24,9 +24,9 @@
     let initFlagPath = `${workingRoot}/__init`;
     if (!fs.existsSync(initFlagPath)) {
         // wait 5 seconds for init
-        setTimeout(() => {
-            init();
-        }, 5000);
+        // setTimeout(() => {
+        init();
+        // }, 5000);
     }
     else {
         run();
@@ -71,9 +71,9 @@
             console.error(`Got error: ${e.message}`);
 
             // reset if init error
-            setTimeout(() => {
-                init();
-            }, 2000);
+            // setTimeout(() => {
+            init();
+            // }, 2000);
         });
     }
 
