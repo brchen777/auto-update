@@ -2,20 +2,22 @@
     'use strict';
 
     require('../prepenv');
-    const config = require('json-cfg').trunk;
+    const url = require('url');
     const repl = require('repl');
     const http = require('http');
-    const url = require('url');
     const WebSocket = require('ws');
-    const pitaya = require('pitayajs');
     const mongo = require('./mongo');
+    const pitaya = require('pitayajs');
+    const config = require('json-cfg').trunk;
 
     const { host, port } = config.conf.server;
     
     const __handlers = {
         get: {
-            '/init': require('./res/get/init'),
-            '/file': require('./res/get/file')
+            '/file': require('./res/file')
+        },
+        post: {
+            '/init': require('./res/init')
         },
         error404: require('./res/error/404')
     };

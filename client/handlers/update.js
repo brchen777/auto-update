@@ -1,14 +1,14 @@
 (() => {
     'use strict';
 
-    const config = require('json-cfg').trunk;
     const http = require('http');
-    const fs = require('fs-extra');
     const path = require('path');
+    const fs = require('fs-extra');
     const shell = require('shelljs');
+    const config = require('json-cfg').trunk;
     const { COMMAND } = require('../../lib/constants');
 
-    const { workingRoot } = config.conf.runtime;
+    const { bashPath, workingRoot } = config.conf.runtime;
     const { host, port } = config.conf.server;
     const { filePath: destPath } = config.conf.client;
     const downloadUrl = `http://${host}:${port}/file`;
@@ -39,14 +39,13 @@
             })
             .then(async () => {
                 // unzip
-                // await exec(COMMAND.UNZIP_FILE(writeFilePath, contentPath));
-                await shell.exec(COMMAND.UNZIP_FILE(writeFilePath, contentPath), { async: true });
+                await shell.exec(COMMAND.UNZIP_FILE(writeFilePath, contentPath), { shell: bashPath, async: true });
                 console.log('* Unzip finish.');
             })
             .then(async () => {
                 // run shell script
                 let shFilePath = path.resolve(workingRoot, `${contentPath}/update.sh`);
-                const { stdout, stderr } = await shell.exec(COMMAND.RUN_SH(shFilePath), { async: true });
+                const { stdout, stderr } = await shell.exec(COMMAND.RUN_SH(shFilePath), { shell: bashPath, async: true });
                 if (stderr) {
                     console.error('* Stderr:', stderr);
                 }

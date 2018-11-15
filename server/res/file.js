@@ -1,14 +1,14 @@
 (() => {
     'use strict';
 
-    require('../../../prepenv');
-    const config = require('json-cfg').trunk;
-    const fs = require('fs-extra');
+    require('../../prepenv');
     const path = require('path');
+    const fs = require('fs-extra');
+    const error404 =  require('./error/404');
+    const config = require('json-cfg').trunk;
 
     const { workingRoot } = config.conf.runtime;
     const { filePath } = config.conf.server;
-    const error404 =  require('../error/404');
     
     module.exports = (req, res, url) => {
         let fileName = (url) ? url.replace(/\//gi, '') : '';

@@ -1,7 +1,6 @@
 (() => {
     'use strict';
 
-    require('../prepenv');
     const config = require('json-cfg').trunk;
     const { MongoClient } = require('mongodb');
 
@@ -22,10 +21,11 @@
             });
         },
 
-        insertOne: async (mac) => {
-            if (!mac || !collection) return;
+        insertOne: async (info) => {
+            if (!info || !collection) return;
 
-            const nodeData = await collection.findOne({ mac });
+            let { machineId, cpu, mem, disk } = info;
+            const nodeData = await collection.findOne({ machineId });
             if (nodeData) return { id: nodeData._id, ip: nodeData.ip };
 
             let time = Math.round(new Date().getTime() / 1000);
@@ -50,7 +50,10 @@
             .insertOne({
                 ip,
                 lastNum,
-                mac,
+                machineId,
+                cpu,
+                mem,
+                disk,
                 status: 1,
                 initTime: time,
                 updateTime: time
