@@ -83,7 +83,7 @@
         });
           
         // write data to request body
-        req.write(JSON.stringify(postData));
+        req.write(postData);
         req.end();
     }
 
