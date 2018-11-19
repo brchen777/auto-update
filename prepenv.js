@@ -15,7 +15,7 @@
     }
 
     if (!shell.which('bash')) {
-        shell.echo('Sorry, this script requires bash');
+        console.error('Sorry, this script requires bash');
         shell.exit(1);
     }
     let { stdout: __bashPath } = shell.which('bash');

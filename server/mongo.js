@@ -28,7 +28,7 @@
             const nodeData = await collection.findOne({ machineId });
             if (nodeData) return { id: nodeData._id, ip: nodeData.ip };
 
-            let time = Math.round(new Date().getTime() / 1000);
+            let time = new Date().getTime();
 
             // get max lastNum
             const maxLastNum = await collection
@@ -61,7 +61,26 @@
             .then((data) => {
                 return data.insertedId;
             });
-            return { id: insertedId, ip };
+            return { id: insertedId, ip, time };
+        },
+
+        updateOne: async (info) => {
+            if (!info || !collection) return;
+
+            let time = new Date().getTime();
+            let { machineId, cpu, mem, disk } = info;
+            let updateId = await collection
+            .findOneAndUpdate(
+                { machineId },
+                { $set: {
+                    cpu, mem, disk,
+                    updateTime: time
+                }}
+            )
+            .then((data) => {
+                return ((data) ? data.value._id : null);
+            });
+            return { id: updateId, time };
         },
 
         deleteAll: () => {

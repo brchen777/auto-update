@@ -3,17 +3,19 @@
 
     require('../prepenv');
     const os = require('os');
-    const http = require('http');
     const fs = require('fs-extra');
     const WebSocket = require('ws');
     const shell = require('shelljs');
+    const cluster = require('cluster');
     const si = require('systeminformation');
     const config = require('json-cfg').trunk;
+    const { postJson } = require('../lib/misc');
     const { COMMAND } = require('../lib/constants');
     const { machineId } = require('node-machine-id');
 
     const { bashPath, workingRoot } = config.conf.runtime;
     const { host, port } = config.conf.server;
+    const { delayTimeout, updateTimeout } = config.conf.client;
     const initUrl = `http://${host}:${port}/init`;
     const wsUrl = `ws://${host}:${port}`;
 
@@ -21,86 +23,72 @@
         __system_update: require('./handlers/update')
     };
 
-    // check client is initialized
-    let initFlagPath = `${workingRoot}/__init`;
-    if (!fs.existsSync(initFlagPath)) {
-        // wait 5 seconds for init
-        // setTimeout(() => {
-        init();
-        // }, 5000);
+    if (cluster.isMaster) {
+        cluster.fork();
+        cluster.on('exit', (worker, code, signal) => {
+            console.log(`* Worker ${worker.process.pid} died (${(signal || code)}). restarting...`);
+            cluster.fork();
+        });
     }
     else {
-        run();
+        try {
+            await main();
+        }
+        catch (err) {
+            console.error(`* ${err}`);
+            process.exit();
+        }
+    }
+
+    async function main() {
+        // check client is initialized
+        let initFlagPath = `${workingRoot}/__init`;
+        if (!fs.existsSync(initFlagPath)) {
+            await init();
+            await run();
+        }
+        else {
+            await run();
+        }
     }
     
     async function init() {
         console.log('* Client init...');
 
-        let sysInfo = await getSystemInfo();
-        let postData = JSON.stringify(sysInfo);
-        let postOptions = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }
-
-        const req = http.request(initUrl, postOptions, (res) => {
-            new Promise((resolve, reject) => {
-                // check response status code
-                (res.statusCode === 200) ? resolve(res) : reject('Mac address error');
-            })
-            .then((res) => {
-                let data = '';
-                res
-                .on('data', (chunk) => {
-                    data += chunk;
-                })
-                .on('end', () => {
-                    let { ip } = JSON.parse(data);
-                    console.log(`* Client get ip: "${ip}"...`);
-
-                    shell.exec(COMMAND.SET_DHCP(ip), { shell: bashPath });
-                    shell.exec(COMMAND.RESTART_NETWORK, { shell: bashPath });
-                    shell.exec(COMMAND.CREATE_INIT_FLAG(ip), { shell: bashPath });
-                });
-            })
-            .catch((err) => {
-                console.error(`* Got error: ${err}`);
-            });
-        })
-        .on('error', (e) => {
-            console.error(`Got error: ${e.message}`);
-
-            // reset if init error
-            // setTimeout(() => {
-            init();
-            // }, 2000);
+        let initResolve, initReject;
+        let initPromise = new Promise((resolve, reject) => {
+            initResolve = resolve;
+            initReject = reject;
         });
-
-        req.on('error', (e) => {
-            console.error(`problem with request: ${e.message}`);
-        });
-          
-        // write data to request body
-        req.write(postData);
-        req.end();
+        setTimeout(configureIp, delayTimeout, initResolve, initReject);
+        return initPromise;
     }
-
-    function run() {
+    
+    async function run() {
         console.log('* Client running...');
 
+        let runReject;
+        let runPromise = new Promise((resolve, reject) => { runReject = reject; });
         const ws = new WebSocket(wsUrl);
-        ws.on('message', (data) => {
+        ws
+        .on('message', (data) => {
             let { eventName, args } = JSON.parse(data);
             let handler = __handlers[eventName] || {};
             if (handler !== undefined) {
                 handler(...args);
             }
+        })
+        .on('close', () => {
+            runReject('Connection close.');
+        })
+        .on('error', (e) => {
+            runReject(e.message);
         });
+        setTimeout(sendSysInfo, updateTimeout, ws);
+        return runPromise;
     }
 
-    async function getSystemInfo() {
+    async function getSysInfo() {
         // get machine id
         const p1 = machineId({ original: true });
 
@@ -121,5 +109,37 @@
         .then(([machineId, cpu, mem, disk]) => {
             return { machineId, cpu, mem, disk };
         });
+    }
+
+    async function configureIp(resolve, reject) {
+        let sysInfo = await getSysInfo();
+        postJson(initUrl, sysInfo)
+        .then((res) => {
+            if (res.statusCode !== 200) {
+                reject('System post error');
+            }
+
+            let { ip } = JSON.parse(res.body);
+            console.log(`* Client get ip: "${ip}"...`);
+            shell.exec(COMMAND.SET_DHCP(ip), { shell: bashPath });
+            shell.exec(COMMAND.RESTART_NETWORK, { shell: bashPath });
+            shell.exec(COMMAND.CREATE_INIT_FLAG(ip), { shell: bashPath });
+            resolve();
+        })
+        .catch((e) => {
+            reject(e.message);
+        });
+    }
+
+    async function sendSysInfo(ws) {
+        let sendResolve;
+        const sendPromise = new Promise((resolve) => { sendResolve = resolve; });
+        let sysInfo = await getSysInfo();
+        ws.send(JSON.stringify({ eventName: '__client-update-info', args: [sysInfo] }), () => {
+            console.log(`* Send sysInfo at ${new Date().toLocaleString()}`);
+            setTimeout(sendSysInfo, updateTimeout, ws);
+            sendResolve();
+        });
+        return sendPromise;
     }
 })();

@@ -11,7 +11,6 @@
     const config = require('json-cfg').trunk;
 
     const { host, port } = config.conf.server;
-    
     const __handlers = {
         get: {
             '/file': require('./res/file')
@@ -19,7 +18,11 @@
         post: {
             '/init': require('./res/init')
         },
-        error404: require('./res/error/404')
+        error404: require('./res/error/404'),
+
+        event: {
+            '__client-update-info': require('./event').updateClientInfo
+        }
     };
 
     const httpServer = http.createServer((req, res) => {
@@ -44,6 +47,17 @@
             }
         });
     };
+
+    wsServer.on('connection', (ws) => {
+        ws.on('message', (data) => {
+            let { eventName, args } = JSON.parse(data);
+            let handlerGroup = __handlers['event'];
+            let handler = handlerGroup[eventName];
+            if (handler !== undefined) {
+                handler(...args);
+            }
+        });
+    });
 
     await mongo.init();
 
