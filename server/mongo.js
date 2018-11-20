@@ -78,7 +78,7 @@
                 }}
             )
             .then((data) => {
-                return ((data) ? data.value._id : null);
+                return ((data.value) ? data.value._id : null);
             });
             return { id: updateId, time };
         },
