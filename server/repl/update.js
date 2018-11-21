@@ -1,7 +1,6 @@
 (() => {
     'use strict';
 
-    require('../../prepenv');
     const fs = require('fs-extra');
     const path = require('path');
     const config = require('json-cfg').trunk;

@@ -76,6 +76,9 @@
     Example:
     > update('result.tgz');
 
+    (3) Broadcast clients to reboot:
+    > reboot();
+
     * Note: After unzip package, client will run "update.sh", so you should prepare "update.sh" in your source files path.
 
 #### Client Side ####

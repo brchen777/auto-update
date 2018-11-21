@@ -62,8 +62,9 @@
     await mongo.init();
 
     let __repl = repl.start('> ');
-    __repl.context.update = require('./repl/update')(wsServer.broadcast, '__system_update');
     __repl.context.zip = require('./repl/zip');
+    __repl.context.reboot = require('./repl/reboot');
+    __repl.context.update = require('./repl/update')(wsServer.broadcast, '__system_update');
 
     // test code
     // wsServer.on('connection', () => {
