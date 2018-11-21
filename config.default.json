@@ -4,7 +4,7 @@
         "port": 1234,
         "filePath": "./file/update",
         "mongodb": {
-            "host": "192.168.0.253",
+            "host": "127.0.0.1",
             "port": 27017,
             "dbName": "auto-update",
             "colName": "node"
