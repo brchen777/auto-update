@@ -8,6 +8,6 @@
     const { bashPath } = config.conf.runtime;
 
     module.exports = async () => {
-        shell.exec(COMMAND.REBOOT(), { shell: bashPath });
+        shell.exec(COMMAND.REBOOT, { shell: bashPath });
     };
 })();
