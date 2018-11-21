@@ -9,9 +9,9 @@
      * @returns
     */
     module.exports = (handler, eventName) => {
-        return () => {
+        return (machineId) => {
             console.log('* System reboot');
-            handler(JSON.stringify({ eventName, args: [] }));
+            handler(JSON.stringify({ eventName, args: [machineId] }));
         };
     };
 })();
