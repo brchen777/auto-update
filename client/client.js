@@ -1,8 +1,14 @@
+process.on('unhandledRejection', (err) => {
+    console.error(`* ${err}`);
+    process.exit(1);
+});
+
 (async () => {
     'use strict';
 
     require('../prepenv');
     const os = require('os');
+    const ping = require('ping');
     const fs = require('fs-extra');
     const WebSocket = require('ws');
     const shell = require('shelljs');
@@ -33,11 +39,18 @@
     }
     else {
         try {
+            // check client can connect to server
+            let connectionAlive = await pingIp(host);
+            while (!connectionAlive) {
+                console.error(`* Not connected at ${new Date().toLocaleString()}.`);
+                await sleep(3000);
+                connectionAlive = await pingIp(host);
+            }
             await main();
         }
         catch (err) {
             console.error(`* ${err}`);
-            process.exit();
+            process.exit(1);
         }
     }
 
@@ -142,5 +155,18 @@
             sendResolve();
         });
         return sendPromise;
+    }
+
+    function pingIp(ip) {
+        return ping.promise.probe(ip)
+        .then((res) => {
+            return res.alive;
+        });
+    }
+
+    function sleep(ms){
+        return new Promise((resolve) => {
+            setTimeout(resolve, ms);
+        });
     }
 })();
