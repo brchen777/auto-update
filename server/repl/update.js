@@ -13,7 +13,7 @@
      * Repl update command
      * @param {function} handler - broadcast function
      * @param {string} eventName - event name
-     * @example update('result.tgz')
+     * @example update('result.tgz');
      * @returns
     */
     module.exports = (handler, eventName) => {

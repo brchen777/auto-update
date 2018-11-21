@@ -14,8 +14,9 @@
     const downloadUrl = `http://${host}:${port}/file`;
 
     module.exports = async (fileName) => {
+        let contentDirName = '__content';
         let packPath = path.resolve(workingRoot, `${destPath}/__pack_${new Date().getTime()}`);
-        let contentPath = `${packPath}/__content`;
+        let contentPath = `${packPath}/${contentDirName}`;
         fs.mkdirSync(contentPath, { recursive: true });
 
         http
@@ -27,30 +28,38 @@
             })
             .then((res) => {
                 // download package
-                let writePrepared;
-                const writePromise = new Promise((resolve) => { writePrepared = resolve; });
-                let writeFile = fs.createWriteStream(writeFilePath);
-                res.pipe(writeFile);
-                writeFile.on('finish', () => {
+                let writeResolve;
+                const writePromise = new Promise((resolve) => { writeResolve = resolve; });
+                let writeStream = fs.createWriteStream(writeFilePath);
+                res.pipe(writeStream);
+                writeStream.on('finish', () => {
                     console.log('* Package download finish.');
-                    writePrepared();
+                    writeResolve();
                 });
                 return writePromise;
             })
             .then(async () => {
                 // unzip
-                await shell.exec(COMMAND.UNZIP_FILE(writeFilePath, contentPath), { shell: bashPath, async: true });
-                console.log('* Unzip finish.');
+                let unzipResolve;
+                const unzipPromise = new Promise((resolve) => { unzipResolve = resolve; });
+                let shellExec = shell.exec(COMMAND.UNZIP_FILE(fileName, contentDirName), { shell: bashPath, cwd: packPath, async: true });
+                shellExec.stdout.on('end', () => {
+                    console.log('* Unzip finish.');
+                    unzipResolve();
+                });
+                return unzipPromise;
             })
             .then(async () => {
                 // run shell script
-                let shFilePath = path.resolve(workingRoot, `${contentPath}/update.sh`);
-                const { stdout, stderr } = await shell.exec(COMMAND.RUN_SH(shFilePath), { shell: bashPath, async: true });
-                if (stderr) {
-                    console.error('* Stderr:', stderr);
-                }
-                console.log(stdout);
-                console.log('* Run shell script finish.');
+                let shResolve;
+                const shPromise = new Promise((resolve) => { shResolve = resolve; });
+                let shFilePath = `./${contentDirName}/update.sh`;
+                let shellExec = await shell.exec(shFilePath, { shell: bashPath, cwd: packPath, async: true });
+                shellExec.stdout.on('end', () => {
+                    console.log('* Run shell script finish.');
+                    shResolve();
+                });
+                return shPromise;
             })
             .catch((err) => {
                 // remove package directory
