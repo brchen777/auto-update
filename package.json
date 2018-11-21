@@ -21,7 +21,7 @@
         "pitayajs": "^1.2.13",
         "repl.history": "^0.1.4",
         "shelljs": "^0.8.3",
-        "systeminformation": "^3.47.0",
-        "ws": "^6.1.0"
+        "systeminformation": "^3.49.3",
+        "ws": "^6.1.2"
     }
 }
