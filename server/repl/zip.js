@@ -11,10 +11,13 @@
      * Repl zip command
      * @param {string} srcPath - source files path
      * @param {string} destPath - zip destination path
-     * @example zip('./file/src', './file/update/result.tgz')
+     * @example zip('./file/src', './file/update/result.tgz');
      * @returns
     */
     module.exports = (srcPath, destPath) => {
-        shell.exec(COMMAND.ZIP_FILE(destPath), { shell: bashPath, cwd: srcPath });
+        let shellExec = shell.exec(COMMAND.ZIP_FILE(destPath), { shell: bashPath, cwd: srcPath, async: true });
+        shellExec.stdout.on('end', () => {
+            console.log('* Zip finish.');
+        });
     };
 })();
