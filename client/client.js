@@ -20,7 +20,8 @@
     const wsUrl = `ws://${host}:${port}`;
 
     const __handlers = {
-        __system_update: require('./handlers/update')
+        __system_update: require('./handlers/update'),
+        __system_reboot: require('./handlers/reboot')
     };
 
     if (cluster.isMaster) {

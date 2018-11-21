@@ -1,20 +1,17 @@
 (() => {
     'use strict';
 
-    const shell = require('shelljs');
-    const config = require('json-cfg').trunk;
-    const { COMMAND } = require('../../lib/constants');
-
-    const { bashPath } = config.conf.runtime;
-
     /** 
      * Repl reboot command
+     * @param {function} handler - broadcast function
+     * @param {string} eventName - event name
      * @example reboot();
      * @returns
     */
-    module.exports = () => {
+    module.exports = (handler, eventName) => {
         return () => {
-            shell.exec(COMMAND.REBOOT(), { shell: bashPath });
+            console.log('* System reboot');
+            handler(JSON.stringify({ eventName, args: [] }));
         };
     };
 })();
