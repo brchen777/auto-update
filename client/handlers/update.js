@@ -38,7 +38,7 @@
                 });
                 return writePromise;
             })
-            .then(async () => {
+            .then(() => {
                 // unzip
                 let unzipResolve;
                 const unzipPromise = new Promise((resolve) => { unzipResolve = resolve; });
@@ -49,12 +49,12 @@
                 });
                 return unzipPromise;
             })
-            .then(async () => {
+            .then(() => {
                 // run shell script
                 let shResolve;
                 const shPromise = new Promise((resolve) => { shResolve = resolve; });
                 let shFilePath = `./${contentDirName}/update.sh`;
-                let shellExec = await shell.exec(shFilePath, { shell: bashPath, cwd: packPath, async: true });
+                let shellExec = shell.exec(COMMAND.RUN_SH(shFilePath), { shell: bashPath, cwd: packPath, async: true });
                 shellExec.stdout.on('end', () => {
                     console.log('* Run shell script finish.');
                     shResolve();
