@@ -15,6 +15,7 @@
         "port": 1234,
         "filePath": "./file/download",
         "preCommand": ["sudo"],
+        "checkConnectionTimeout": 2000,
         "delayTimeout": 5000,
         "updateTimeout": 30000
     }

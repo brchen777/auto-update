@@ -8,7 +8,7 @@ process.on('unhandledRejection', (err) => {
 
     require('../prepenv');
     const os = require('os');
-    const ping = require('ping');
+    const net = require('net');
     const fs = require('fs-extra');
     const WebSocket = require('ws');
     const shell = require('shelljs');
@@ -21,7 +21,7 @@ process.on('unhandledRejection', (err) => {
 
     const { bashPath, workingRoot } = config.conf.runtime;
     const { host, port } = config.conf.server;
-    const { delayTimeout, updateTimeout } = config.conf.client;
+    const { checkConnectionTimeout, delayTimeout, updateTimeout } = config.conf.client;
     const initUrl = `http://${host}:${port}/init`;
     const wsUrl = `ws://${host}:${port}`;
 
@@ -40,16 +40,16 @@ process.on('unhandledRejection', (err) => {
     else {
         try {
             // check client can connect to server
-            let connectionAlive = await pingIp(host);
+            let connectionAlive = await checkConnection(host, port);
             while (!connectionAlive) {
                 console.error(`* Not connected at ${new Date().toLocaleString()}.`);
-                await sleep(3000);
-                connectionAlive = await pingIp(host);
+                await sleep(checkConnectionTimeout);
+                connectionAlive = await checkConnection(host, port);
             }
             await main();
         }
         catch (err) {
-            console.error(`* ${err}`);
+            console.error(`* ${err} at ${new Date().toLocaleString()}.`);
             process.exit(1);
         }
     }
@@ -157,11 +157,25 @@ process.on('unhandledRejection', (err) => {
         return sendPromise;
     }
 
-    function pingIp(ip) {
-        return ping.promise.probe(ip)
-        .then((res) => {
-            return res.alive;
+    async function checkConnection(host, port, timeout) {
+        let connectResolve;
+        let connectPromise = new Promise((resolve) => { connectResolve = resolve; });
+        timeout = timeout || 10000;
+        let timer = setTimeout(() => {
+            socket.end();
+            connectResolve(false);
+        }, timeout);
+
+        let socket = net.createConnection(port, host, () => {
+            clearTimeout(timer);
+            socket.end();
+            connectResolve(true);
         });
+        socket.on('error', () => {
+            clearTimeout(timer);
+            connectResolve(false);
+        });
+        return connectPromise;
     }
 
     function sleep(ms){
