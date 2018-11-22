@@ -4,9 +4,9 @@
     const config = require('json-cfg').trunk;
     const { MongoClient } = require('mongodb');
 
-    const { host: clientIp } = config.conf.client;
-    const { host, port, dbName, colName } = config.conf.server.mongodb;
-    const dbUrl = `mongodb://${host}:${port}/`;
+    const { host: clientHost } = config.conf.client;
+    const { host: dbHost, port: dbPort, dbName, colName } = config.conf.server.mongodb;
+    const dbUrl = `mongodb://${dbHost}:${dbPort}/`;
     let collection = null;
 
     let exportObj = {
@@ -41,7 +41,7 @@
             });
 
             let lastNum = (maxLastNum >= 1 && maxLastNum < 253) ? maxLastNum + 1 : 1;
-            let ipClasses = clientIp.split('.');
+            let ipClasses = clientHost.split('.');
             ipClasses.splice(-1, 1, lastNum.toString());
             let ip = ipClasses.join('.');
 
