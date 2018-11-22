@@ -1,7 +1,6 @@
 (() => {
     'use strict';
 
-    require('../../prepenv');
     const path = require('path');
     const fs = require('fs-extra');
     const error404 =  require('./error/404');
