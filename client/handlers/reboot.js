@@ -9,7 +9,7 @@
     const { bashPath } = config.conf.runtime;
 
     module.exports = async (id = null) => {
-        let localId = await machineId({ original: true });
+        let localId = await machineId();
         if (id !== null && id !== localId) return;
 
         shell.exec(COMMAND.REBOOT, { shell: bashPath });

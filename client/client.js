@@ -156,7 +156,7 @@ process.on('unhandledRejection', (err) => {
 
     async function getSysInfo() {
         // get machine id
-        const p1 = machineId({ original: true });
+        const p1 = machineId();
 
         // get cpu info
         const p2 = Promise.resolve(os.cpus());
