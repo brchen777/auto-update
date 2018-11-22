@@ -20,10 +20,10 @@ process.on('unhandledRejection', (err) => {
     const { machineId } = require('node-machine-id');
 
     const { bashPath, workingRoot } = config.conf.runtime;
-    const { host, port } = config.conf.server;
-    const { checkConnectionTimeout, delayTimeout, updateTimeout } = config.conf.client;
-    const initUrl = `http://${host}:${port}/init`;
-    const wsUrl = `ws://${host}:${port}`;
+    const { host: serverHost, port: serverPort } = config.conf.server;
+    const { detectTimeout, delayTimeout, updateTimeout } = config.conf.client;
+    const initUrl = `http://${serverHost}:${serverPort}/init`;
+    const wsUrl = `ws://${serverHost}:${serverPort}`;
 
     const __handlers = {
         __system_update: require('./handlers/update'),
@@ -39,14 +39,15 @@ process.on('unhandledRejection', (err) => {
     }
     else {
         try {
-            // check client can connect to server
-            let connectionAlive = await checkConnection(host, port);
-            while (!connectionAlive) {
-                console.error(`* Not connected at ${new Date().toLocaleString()}.`);
-                await sleep(checkConnectionTimeout);
-                connectionAlive = await checkConnection(host, port);
+            // check client is initialized
+            let initFlagPath = `${workingRoot}/__init`;
+            if (!fs.existsSync(initFlagPath)) {
+                await detectNetwork(serverHost, serverPort, detectTimeout, init);
+                await detectNetwork(serverHost, serverPort, detectTimeout, run);
             }
-            await main();
+            else {
+                await detectNetwork(serverHost, serverPort, detectTimeout, run);
+            }
         }
         catch (err) {
             console.error(`* ${err} at ${new Date().toLocaleString()}.`);
@@ -54,18 +55,6 @@ process.on('unhandledRejection', (err) => {
         }
     }
 
-    async function main() {
-        // check client is initialized
-        let initFlagPath = `${workingRoot}/__init`;
-        if (!fs.existsSync(initFlagPath)) {
-            await init();
-            await run();
-        }
-        else {
-            await run();
-        }
-    }
-    
     async function init() {
         console.log('* Client init...');
 
@@ -77,7 +66,7 @@ process.on('unhandledRejection', (err) => {
         setTimeout(configureIp, delayTimeout, initResolve, initReject);
         return initPromise;
     }
-    
+
     async function run() {
         console.log('* Client running...');
 
@@ -102,27 +91,35 @@ process.on('unhandledRejection', (err) => {
         return runPromise;
     }
 
-    async function getSysInfo() {
-        // get machine id
-        const p1 = machineId({ original: true });
+    // check client can connect to server
+    async function detectNetwork(host, port, timeout, cb) {
+        let alive = await connectionAlive(host, port);
+        while (!alive) {
+            console.error(`* Not connected at ${new Date().toLocaleString()}.`);
+            await sleep(timeout);
+            alive = await connectionAlive(host, port);
+        }
+        await cb();
+    }
 
-        // get cpu info
-        const p2 = Promise.resolve(os.cpus());
+    async function connectionAlive(host, port) {
+        let connectResolve;
+        let connectPromise = new Promise((resolve) => { connectResolve = resolve; });
+        let timer = setTimeout(() => {
+            socket.end();
+            connectResolve(false);
+        }, 10000);
 
-        // get memory info
-        const p3 = si.mem().catch((error) => {
-            console.error(error);
+        let socket = net.createConnection(port, host, () => {
+            clearTimeout(timer);
+            socket.end();
+            connectResolve(true);
         });
-
-        // get disk info
-        const p4 = si.fsSize().catch((error) => {
-            console.error(error);
+        socket.on('error', () => {
+            clearTimeout(timer);
+            connectResolve(false);
         });
-
-        return Promise.all([p1, p2, p3, p4])
-        .then(([machineId, cpu, mem, disk]) => {
-            return { machineId, cpu, mem, disk };
-        });
+        return connectPromise;
     }
 
     async function configureIp(resolve, reject) {
@@ -157,25 +154,27 @@ process.on('unhandledRejection', (err) => {
         return sendPromise;
     }
 
-    async function checkConnection(host, port, timeout) {
-        let connectResolve;
-        let connectPromise = new Promise((resolve) => { connectResolve = resolve; });
-        timeout = timeout || 10000;
-        let timer = setTimeout(() => {
-            socket.end();
-            connectResolve(false);
-        }, timeout);
+    async function getSysInfo() {
+        // get machine id
+        const p1 = machineId({ original: true });
 
-        let socket = net.createConnection(port, host, () => {
-            clearTimeout(timer);
-            socket.end();
-            connectResolve(true);
+        // get cpu info
+        const p2 = Promise.resolve(os.cpus());
+
+        // get memory info
+        const p3 = si.mem().catch((error) => {
+            console.error(error);
         });
-        socket.on('error', () => {
-            clearTimeout(timer);
-            connectResolve(false);
+
+        // get disk info
+        const p4 = si.fsSize().catch((error) => {
+            console.error(error);
         });
-        return connectPromise;
+
+        return Promise.all([p1, p2, p3, p4])
+        .then(([machineId, cpu, mem, disk]) => {
+            return { machineId, cpu, mem, disk };
+        });
     }
 
     function sleep(ms){
