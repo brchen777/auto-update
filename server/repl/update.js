@@ -15,16 +15,28 @@
      * @example update('result.tgz');
      * @returns
     */
-    module.exports = (handler, eventName) => {
-        return (fileName) => {
+    module.exports = (type, handler) => {
+        return (fileName, ...args) => {
             let updateFilePath = path.resolve(workingRoot, `${destPath}/${fileName}`);
             if (!fs.existsSync(updateFilePath)) {
                 console.error('* File path error');
                 return;
             }
 
+            if (typeof handler !== 'function') {
+                console.error('* System update error');
+                return;
+            }
+            
             console.log('* System update');
-            handler(JSON.stringify({ eventName, args: [fileName] }));
+            let eventName = '__system_update';
+            if (type === 'one') {
+                let [machineId, ...otherArgs] = args;
+                handler(machineId, JSON.stringify({ eventName, args: [fileName, ...otherArgs] }));
+            }
+            else if (type === 'all') {
+                handler(JSON.stringify({ eventName, args: [fileName, ...args] }));
+            }
         };
     };
 })();

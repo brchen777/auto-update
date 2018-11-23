@@ -15,15 +15,16 @@ process.on('unhandledRejection', (err) => {
     const cluster = require('cluster');
     const si = require('systeminformation');
     const config = require('json-cfg').trunk;
-    const { postJson } = require('../lib/misc');
+    const { postJson, sleep } = require('../lib/misc');
     const { COMMAND } = require('../lib/constants');
-    const { machineId } = require('node-machine-id');
+    const { machineIdSync } = require('node-machine-id');
 
     const { bashPath, workingRoot } = config.conf.runtime;
     const { host: serverHost, port: serverPort } = config.conf.server;
     const { detectTimeout, delayTimeout, updateTimeout } = config.conf.client;
     const initUrl = `http://${serverHost}:${serverPort}/init`;
     const wsUrl = `ws://${serverHost}:${serverPort}`;
+    const machineId = machineIdSync();
 
     const __handlers = {
         __system_update: require('./handlers/update'),
@@ -74,6 +75,9 @@ process.on('unhandledRejection', (err) => {
         let runPromise = new Promise((resolve, reject) => { runReject = reject; });
         const ws = new WebSocket(wsUrl);
         ws
+        .on('open', () => {
+            ws.send(JSON.stringify({ eventName: '__client-client-open', args: [machineId] }));
+        })
         .on('message', (data) => {
             let { eventName, args } = JSON.parse(data);
             let handler = __handlers[eventName] || {};
@@ -156,7 +160,7 @@ process.on('unhandledRejection', (err) => {
 
     async function getSysInfo() {
         // get machine id
-        const p1 = machineId();
+        const p1 = Promise.resolve(machineId);
 
         // get cpu info
         const p2 = Promise.resolve(os.cpus());
@@ -174,12 +178,6 @@ process.on('unhandledRejection', (err) => {
         return Promise.all([p1, p2, p3, p4])
         .then(([machineId, cpu, mem, disk]) => {
             return { machineId, cpu, mem, disk };
-        });
-    }
-
-    function sleep(ms){
-        return new Promise((resolve) => {
-            setTimeout(resolve, ms);
         });
     }
 })();

@@ -3,6 +3,7 @@
 
     const config = require('json-cfg').trunk;
     const { MongoClient } = require('mongodb');
+    const { STATUS } = require('../lib/constants');
 
     const { host: clientHost } = config.conf.client;
     const { host: dbHost, port: dbPort, dbName, colName } = config.conf.server.mongodb;
@@ -49,7 +50,7 @@
             const insertedId = await collection
             .insertOne({
                 ip, lastNum, machineId, cpu, mem, disk,
-                status: 1,
+                status: STATUS.INIT,
                 initTime: time,
                 updateTime: time
             })
@@ -69,6 +70,7 @@
                 { machineId },
                 { $set: {
                     cpu, mem, disk,
+                    status: STATUS.ALIVE,
                     updateTime: time
                 }}
             )
@@ -78,8 +80,19 @@
             return { id: updateId, time };
         },
 
+        updateStatus: async (filter, status) => {
+            if (!filter || Object(filter) !== filter || !collection) return;
+
+            collection
+            .updateOne(
+                filter,
+                { $set: { status } }
+            );
+        },
+
         deleteAll: () => {
             if (!collection) return;
+
             collection.deleteMany({});
         }
     }
