@@ -71,7 +71,10 @@
     > zip('./file/src', './file/update/result.tgz');
 
     (2) Broadcast all clients to download package and unzip it:
-    > updateAll();
+    > updateAll(package_name_in_upload_path);
+
+    Example:
+    > updateAll('result.tgz');
 
     (3) Send designated client to download package and unzip it:
     > update(machine_id, package_name_in_upload_path);
