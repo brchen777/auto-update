@@ -41,12 +41,12 @@
     });
     httpServer.listen(port, host);
 
-    const wsServer = await new WebSocket.Server({ server: httpServer, handshakeTimeout: 5000 });
+    const wsServer = new WebSocket.Server({ server: httpServer, handshakeTimeout: 5000 });
     Object.assign(wsServer, {
         machineMap: {},
         send: function (machineId, data) {
             if (!machineId) return;
-    
+
             let client = this.machineMap[machineId];
             if (client && client.readyState === WebSocket.OPEN) {
                 client.send(data);
@@ -96,26 +96,13 @@
 
     let REPL = repl.start('> ');
     REPL.context.zip = require('./repl/zip');
-    REPL.context.update = require('./repl/update')('one', wsServer.send);
-    REPL.context.updateAll = require('./repl/update')('all', wsServer.broadcast);
-    REPL.context.reboot = require('./repl/reboot')('one', wsServer.send);
-    REPL.context.rebootAll = require('./repl/reboot')('all', wsServer.broadcast);
+    REPL.context.update = require('./repl/update')('one', wsServer.send.bind(wsServer));
+    REPL.context.updateAll = require('./repl/update')('all', wsServer.broadcast.bind(wsServer));
+    REPL.context.reboot = require('./repl/reboot')('one', wsServer.send.bind(wsServer));
+    REPL.context.rebootAll = require('./repl/reboot')('all', wsServer.broadcast.bind(wsServer));
     REPL.context.test = () => {
         wsServer.broadcast(JSON.stringify({ eventName: 'test', args: ['123'] }));
     };
-
-    // test code
-    // wsServer.on('connection', async () => {
-    //     const { sleep } = require('../lib/misc');
-    //     await sleep(3);
-    //     // wsServer.broadcast(JSON.stringify({ eventName: '__system_update', args: ['result.tgz'] }));
-    //     // wsServer.send('a3c15624203d2968deb57e523207dffe74d5ea9615bad176bf500828613e20d0', JSON.stringify({ eventName: '__system_update', args: ['result.tgz'] }));
-    //     // wsServer.send('f2407ce9597442a2b07aebc67e6c15e7', JSON.stringify({ eventName: '__system_update', args: ['result.tgz'] }));
-
-    //     // wsServer.broadcast(JSON.stringify({ eventName: '__system_reboot', args: [] }));
-    //     // wsServer.send('a3c15624203d2968deb57e523207dffe74d5ea9615bad176bf500828613e20d0', JSON.stringify({ eventName: '__system_reboot', args: [] }));
-    //     // wsServer.send('f2407ce9597442a2b07aebc67e6c15e7', JSON.stringify({ eventName: '__system_reboot', args: [] }));
-    // });
 
     function __getKeyByValue(obj, value) {
         return Object.keys(obj).find(key => obj[key] === value);

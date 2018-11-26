@@ -12,7 +12,8 @@
      * Repl update command
      * @param {function} handler - broadcast function
      * @param {string} eventName - event name
-     * @example update('result.tgz');
+     * @example updateAll('result.tgz');
+     * @example update('9e850088de36b4e9de1f8df822ad68ee527cae543b5e730249cb478efc55bba5', 'result.tgz');
      * @returns
     */
     module.exports = (type, handler) => {

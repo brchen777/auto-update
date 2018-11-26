@@ -71,19 +71,22 @@
     > zip('./file/src', './file/update/result.tgz');
 
     (2) Broadcast all clients to download package and unzip it:
-    > update(package_name_in_upload_path);
+    > updateAll();
+
+    (3) Send designated client to download package and unzip it:
+    > update(machine_id, package_name_in_upload_path);
 
     Example:
-    > update('result.tgz');
+    > update('9e850088de36b4e9de1f8df822ad68ee527cae543b5e730249cb478efc55bba5', 'result.tgz');
 
-    (3) Broadcast all clients to reboot:
-    > reboot();
+    (4) Broadcast all clients to reboot:
+    > rebootAll();
 
-    Or Broadcast client to designated reboot:
+    (5) Send designated client to reboot:
     > reboot(machine_id);
 
     Example:
-    > reboot('f2407ce9597442a2b07aebc67e6c15e7');
+    > reboot('9e850088de36b4e9de1f8df822ad68ee527cae543b5e730249cb478efc55bba5');
 
     * Note: After unzip package, client will run "update.sh", so you should prepare "update.sh" in your source files path.
 

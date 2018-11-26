@@ -5,7 +5,8 @@
      * Repl reboot command
      * @param {function} handler - broadcast function
      * @param {string} eventName - event name
-     * @example reboot();
+     * @example rebootAll();
+     * @example reboot('9e850088de36b4e9de1f8df822ad68ee527cae543b5e730249cb478efc55bba5');
      * @returns
     */
     module.exports = (type, handler) => {
