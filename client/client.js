@@ -154,7 +154,7 @@ process.on('unhandledRejection', (err) => {
         const sendPromise = new Promise((resolve) => { sendResolve = resolve; });
         let sysInfo = await getSysInfo();
         ws.send(JSON.stringify({ eventName: '__client-update-info', args: [sysInfo] }), () => {
-            consoleLog(`* Send sysInfo at ${new Date().toLocaleString()}`);
+            consoleLog('Send sysInfo...');
             setTimeout(sendSysInfo, updateTimeout, ws);
             sendResolve();
         });
