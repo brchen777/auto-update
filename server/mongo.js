@@ -49,7 +49,7 @@
             // add new node info
             const insertedId = await collection
             .insertOne({
-                ip, lastNum, uid, cpu, mem, disk,
+                uid, ip, lastNum, cpu, mem, disk,
                 status: STATUS.INIT,
                 initTime: time,
                 updateTime: time
