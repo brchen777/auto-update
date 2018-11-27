@@ -17,9 +17,9 @@ process.on('unhandledRejection', (err) => {
     const readline = require('readline');
     const si = require('systeminformation');
     const config = require('json-cfg').trunk;
-    const { postJson, sleep } = require('../lib/misc');
     const { COMMAND } = require('../lib/constants');
     const { machineIdSync } = require('node-machine-id');
+    const { postJson, sleep, consoleLog, consoleError } = require('../lib/misc');
 
     const hash = crypto.createHash('md5');
     const { bashPath, workingRoot } = config.conf.runtime;
@@ -38,7 +38,7 @@ process.on('unhandledRejection', (err) => {
     if (cluster.isMaster) {
         cluster.fork();
         cluster.on('exit', (worker, code, signal) => {
-            console.log(`* Worker ${worker.process.pid} died (${(signal || code)}). restarting...`);
+            consoleLog(`Worker ${worker.process.pid} died (${(signal || code)}), Restarting...`);
             cluster.fork();
         });
     }
@@ -54,13 +54,13 @@ process.on('unhandledRejection', (err) => {
             }
         }
         catch (err) {
-            console.error(`* ${err} at ${new Date().toLocaleString()}.`);
+            consoleError(err);
             process.exit(1);
         }
     }
 
     async function init() {
-        console.log('* Client init...');
+        consoleLog('Client init...');
 
         let initResolve, initReject;
         let initPromise = new Promise((resolve, reject) => {
@@ -72,7 +72,7 @@ process.on('unhandledRejection', (err) => {
     }
 
     async function run() {
-        console.log('* Client running...');
+        consoleLog('Client running...');
 
         let runReject;
         let runPromise = new Promise((resolve, reject) => { runReject = reject; });
@@ -102,7 +102,7 @@ process.on('unhandledRejection', (err) => {
     async function detectNetwork(host, port, timeout, cb) {
         let alive = await connectionAlive(host, port);
         while (!alive) {
-            console.error(`* Not connected at ${new Date().toLocaleString()}.`);
+            consoleError('Not connected');
             await sleep(timeout);
             alive = await connectionAlive(host, port);
         }
@@ -138,7 +138,7 @@ process.on('unhandledRejection', (err) => {
             }
 
             let { uid, ip } = JSON.parse(res.body);
-            console.log(`* Client get ip: "${ip}"...`);
+            consoleLog(`Client get ip: "${ip}"...`);
             shell.exec(COMMAND.SET_DHCP(ip), { shell: bashPath });
             shell.exec(COMMAND.RESTART_NETWORK, { shell: bashPath });
             shell.exec(COMMAND.CREATE_INIT_FLAG(uid), { shell: bashPath });
@@ -154,7 +154,7 @@ process.on('unhandledRejection', (err) => {
         const sendPromise = new Promise((resolve) => { sendResolve = resolve; });
         let sysInfo = await getSysInfo();
         ws.send(JSON.stringify({ eventName: '__client-update-info', args: [sysInfo] }), () => {
-            console.log(`* Send sysInfo at ${new Date().toLocaleString()}`);
+            consoleLog(`* Send sysInfo at ${new Date().toLocaleString()}`);
             setTimeout(sendSysInfo, updateTimeout, ws);
             sendResolve();
         });
@@ -169,13 +169,13 @@ process.on('unhandledRejection', (err) => {
         const p2 = Promise.resolve(os.cpus());
 
         // get memory info
-        const p3 = si.mem().catch((error) => {
-            console.error(error);
+        const p3 = si.mem().catch((err) => {
+            consoleError(err);
         });
 
         // get disk info
-        const p4 = si.fsSize().catch((error) => {
-            console.error(error);
+        const p4 = si.fsSize().catch((err) => {
+            consoleError(err);
         });
 
         return Promise.all([p1, p2, p3, p4])

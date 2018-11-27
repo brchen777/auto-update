@@ -3,6 +3,7 @@
 
     const shell = require('shelljs');
     const config = require('json-cfg').trunk;
+    const { consoleLog } = require('../../lib/misc');
     const { COMMAND } = require('../../lib/constants');
 
     const { bashPath } = config.conf.runtime;
@@ -17,7 +18,7 @@
     module.exports = (srcPath, destPath) => {
         let shellExec = shell.exec(COMMAND.ZIP_FILE(destPath), { shell: bashPath, cwd: srcPath, async: true });
         shellExec.stdout.on('end', () => {
-            console.log('* Zip finish.');
+            consoleLog('Zip finish');
         });
     };
 })();

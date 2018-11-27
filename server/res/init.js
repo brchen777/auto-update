@@ -3,6 +3,7 @@
 
     const mongo = require('../mongo');
     const error404 =  require('./error/404');
+    const { consoleLog } = require('../../lib/misc');
 
     module.exports = (req, res) => {
         let body = '';
@@ -23,7 +24,7 @@
             }
     
             let { uid, ip } = result;
-            console.log(`* Node "${uid}" get ip: "${ip}"`);
+            consoleLog(`Node "${uid}" get ip: "${ip}"`);
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.write(JSON.stringify(result));
             res.end();

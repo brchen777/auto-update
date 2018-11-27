@@ -1,22 +1,24 @@
 (() => {
     'use strict';
 
+    const { consoleLog } = require('../../lib/misc');
+
     /** 
      * Repl reboot command
      * @param {function} handler - broadcast function
      * @param {string} eventName - event name
      * @example rebootAll();
-     * @example reboot('9e850088de36b4e9de1f8df822ad68ee527cae543b5e730249cb478efc55bba5');
+     * @example reboot('ca832f67f4c8e1d8bce7f4ee2ff9bfab');
      * @returns
     */
     module.exports = (type, handler) => {
         return (...args) => {
             if (typeof handler !== 'function') {
-                console.log('* System reboot error');
+                consoleLog('System reboot error');
                 return;
             }
 
-            console.log('* System reboot');
+            consoleLog('System reboot');
             let eventName = '__system_reboot';
             if (type === 'one') {
                 let [uid, ...otherArgs] = args;

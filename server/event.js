@@ -2,15 +2,16 @@
     'use strict';
 
     const mongo = require('./mongo');
+    const { consoleLog, consoleError } = require('../lib/misc');
 
     let exportObj = {
         updateClientInfo: async (data) => {
-            let { id, uid, time } = await mongo.updateOne(data);
+            let { id, uid } = await mongo.updateOne(data);
             if (id) {
-                console.log(`* Node "${uid}" update sysInfo finish (${new Date(time).toLocaleString()}).`);
+                consoleLog(`Node "${uid}" update sysInfo finish`);
             }
             else {
-                console.error(`* Node update sysInfo error.`);
+                consoleError('Node update sysInfo error');
             }
         }
     };

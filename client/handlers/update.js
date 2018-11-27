@@ -7,6 +7,7 @@
     const shell = require('shelljs');
     const config = require('json-cfg').trunk;
     const { COMMAND } = require('../../lib/constants');
+    const { consoleLog, consoleError } = require('../../lib/misc');
 
     const { bashPath, workingRoot } = config.conf.runtime;
     const { host, port } = config.conf.server;
@@ -33,7 +34,7 @@
                 let writeStream = fs.createWriteStream(writeFilePath);
                 res.pipe(writeStream);
                 writeStream.on('finish', () => {
-                    console.log('* Package download finish.');
+                    consoleLog('Package download finish');
                     writeResolve();
                 });
                 return writePromise;
@@ -44,7 +45,7 @@
                 const unzipPromise = new Promise((resolve) => { unzipResolve = resolve; });
                 let shellExec = shell.exec(COMMAND.UNZIP_FILE(fileName, contentDirName), { shell: bashPath, cwd: packPath, async: true });
                 shellExec.stdout.on('end', () => {
-                    console.log('* Unzip finish.');
+                    consoleLog('Unzip finish');
                     unzipResolve();
                 });
                 return unzipPromise;
@@ -56,7 +57,7 @@
                 let shFilePath = `./${contentDirName}/update.sh`;
                 let shellExec = shell.exec(COMMAND.RUN_SH(shFilePath), { shell: bashPath, cwd: packPath, async: true });
                 shellExec.stdout.on('end', () => {
-                    console.log('* Run shell script finish.');
+                    consoleLog('Run shell script finish');
                     shResolve();
                 });
                 return shPromise;
@@ -64,7 +65,7 @@
             .catch((err) => {
                 // remove package directory
                 fs.removeSync(packPath);
-                console.error(err);
+                consoleError(err);
             });
         });
     };
