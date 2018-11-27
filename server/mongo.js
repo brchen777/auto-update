@@ -33,7 +33,7 @@
 
             // get max lastNum
             const maxLastNum = await collection
-            .find({})
+            .find({ lastNum: { $lt: 253, $gt: 1 }})
             .sort({ lastNum: -1 })
             .limit(1)
             .toArray()
