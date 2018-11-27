@@ -12,19 +12,23 @@ process.on('unhandledRejection', (err) => {
     const fs = require('fs-extra');
     const WebSocket = require('ws');
     const shell = require('shelljs');
+    const crypto = require('crypto');
     const cluster = require('cluster');
+    const readline = require('readline');
     const si = require('systeminformation');
     const config = require('json-cfg').trunk;
     const { postJson, sleep } = require('../lib/misc');
     const { COMMAND } = require('../lib/constants');
     const { machineIdSync } = require('node-machine-id');
 
+    const hash = crypto.createHash('md5');
     const { bashPath, workingRoot } = config.conf.runtime;
     const { host: serverHost, port: serverPort } = config.conf.server;
     const { detectTimeout, delayTimeout, updateTimeout } = config.conf.client;
     const initUrl = `http://${serverHost}:${serverPort}/init`;
+    const initFlagPath = `${workingRoot}/__init`;
     const wsUrl = `ws://${serverHost}:${serverPort}`;
-    const machineId = machineIdSync();
+    const uid = await getUID();
 
     const __handlers = {
         __system_update: require('./handlers/update'),
@@ -41,7 +45,6 @@ process.on('unhandledRejection', (err) => {
     else {
         try {
             // check client is initialized
-            let initFlagPath = `${workingRoot}/__init`;
             if (!fs.existsSync(initFlagPath)) {
                 await detectNetwork(serverHost, serverPort, detectTimeout, init);
                 await detectNetwork(serverHost, serverPort, detectTimeout, run);
@@ -75,8 +78,8 @@ process.on('unhandledRejection', (err) => {
         let runPromise = new Promise((resolve, reject) => { runReject = reject; });
         const ws = new WebSocket(wsUrl);
         ws
-        .on('open', () => {
-            ws.send(JSON.stringify({ eventName: '__client-client-open', args: [machineId] }));
+        .on('open', async () => {
+            ws.send(JSON.stringify({ eventName: '__client-client-open', args: [uid] }));
         })
         .on('message', (data) => {
             let { eventName, args } = JSON.parse(data);
@@ -134,11 +137,11 @@ process.on('unhandledRejection', (err) => {
                 reject('System post error');
             }
 
-            let { ip } = JSON.parse(res.body);
+            let { uid, ip } = JSON.parse(res.body);
             console.log(`* Client get ip: "${ip}"...`);
             shell.exec(COMMAND.SET_DHCP(ip), { shell: bashPath });
             shell.exec(COMMAND.RESTART_NETWORK, { shell: bashPath });
-            shell.exec(COMMAND.CREATE_INIT_FLAG(ip), { shell: bashPath });
+            shell.exec(COMMAND.CREATE_INIT_FLAG(uid), { shell: bashPath });
             resolve();
         })
         .catch((e) => {
@@ -159,8 +162,8 @@ process.on('unhandledRejection', (err) => {
     }
 
     async function getSysInfo() {
-        // get machine id
-        const p1 = Promise.resolve(machineId);
+        // get uid
+        const p1 = Promise.resolve(uid);
 
         // get cpu info
         const p2 = Promise.resolve(os.cpus());
@@ -176,8 +179,28 @@ process.on('unhandledRejection', (err) => {
         });
 
         return Promise.all([p1, p2, p3, p4])
-        .then(([machineId, cpu, mem, disk]) => {
-            return { machineId, cpu, mem, disk };
+        .then(([uid, cpu, mem, disk]) => {
+            return { uid, cpu, mem, disk };
         });
+    }
+
+    async function getUID() {
+        let readResolve;
+        const readPromise = new Promise((resolve) => { readResolve = resolve; });
+        if (fs.existsSync(initFlagPath)) {
+            let rl = readline.createInterface({
+                input: fs.createReadStream(initFlagPath)
+            });
+            rl.on('line', (line) => {
+                readResolve(line);
+            });
+        }
+        else {
+            let machineId = machineIdSync();
+            let time = Date.now();
+            let hexStr = hash.update(`${machineId}-${time}`).digest('hex');
+            readResolve(hexStr);
+        }
+        return readPromise;
     }
 })();

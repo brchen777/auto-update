@@ -19,8 +19,8 @@
             console.log('* System reboot');
             let eventName = '__system_reboot';
             if (type === 'one') {
-                let [machineId, ...otherArgs] = args;
-                handler(machineId, JSON.stringify({ eventName, args: [...otherArgs] }));
+                let [uid, ...otherArgs] = args;
+                handler(uid, JSON.stringify({ eventName, args: [...otherArgs] }));
             }
             else if (type === 'all') {
                 handler(JSON.stringify({ eventName, args: [...args] }));

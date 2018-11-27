@@ -44,10 +44,10 @@
     const wsServer = new WebSocket.Server({ server: httpServer, handshakeTimeout: 5000 });
     Object.assign(wsServer, {
         machineMap: {},
-        send: function (machineId, data) {
-            if (!machineId) return;
+        send: function (uid, data) {
+            if (!uid) return;
 
-            let client = this.machineMap[machineId];
+            let client = this.machineMap[uid];
             if (client && client.readyState === WebSocket.OPEN) {
                 client.send(data);
             }
@@ -71,8 +71,8 @@
 
             let { eventName, args } = JSON.parse(data);
             if (eventName === '__client-client-open') {
-                let [machineId] = args;
-                wsServer.machineMap[machineId] = ws;
+                let [uid] = args;
+                wsServer.machineMap[uid] = ws;
             }
             else {
                 let handlerGroup = HANDLERS['event'];
@@ -84,12 +84,9 @@
         })
         .on('close', async () => {
             await mongo.updateStatus({ ip }, STATUS.DIED);
-            let machineId = __getKeyByValue(wsServer.machineMap, ws);
-            delete wsServer.machineMap[machineId];
+            let uid = __getKeyByValue(wsServer.machineMap, ws);
+            delete wsServer.machineMap[uid];
         });
-    })
-    .on('open', (...args) => {
-        console.log(args);
     });
 
     await mongo.init();

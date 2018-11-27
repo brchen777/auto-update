@@ -32,8 +32,8 @@
             console.log('* System update');
             let eventName = '__system_update';
             if (type === 'one') {
-                let [machineId, ...otherArgs] = args;
-                handler(machineId, JSON.stringify({ eventName, args: [fileName, ...otherArgs] }));
+                let [uid, ...otherArgs] = args;
+                handler(uid, JSON.stringify({ eventName, args: [fileName, ...otherArgs] }));
             }
             else if (type === 'all') {
                 handler(JSON.stringify({ eventName, args: [fileName, ...args] }));

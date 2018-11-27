@@ -25,11 +25,11 @@
         insertOne: async (info) => {
             if (!info || !collection) return;
 
-            let { machineId, cpu, mem, disk } = info;
-            const nodeData = await collection.findOne({ machineId });
+            let { uid, cpu, mem, disk } = info;
+            const nodeData = await collection.findOne({ uid });
             if (nodeData) return { id: nodeData._id, ip: nodeData.ip };
 
-            let time = new Date().getTime();
+            let time = Date.now();
 
             // get max lastNum
             const maxLastNum = await collection
@@ -38,10 +38,10 @@
             .limit(1)
             .toArray()
             .then(([data]) => {
-                return ((data) ? data.lastNum : 1);
+                return ((data) ? data.lastNum : 2);
             });
 
-            let lastNum = (maxLastNum >= 1 && maxLastNum < 253) ? maxLastNum + 1 : 1;
+            let lastNum = (253 > maxLastNum && maxLastNum > 1) ? maxLastNum + 1 : 2;
             let ipClasses = clientHost.split('.');
             ipClasses.splice(-1, 1, lastNum.toString());
             let ip = ipClasses.join('.');
@@ -49,7 +49,7 @@
             // add new node info
             const insertedId = await collection
             .insertOne({
-                ip, lastNum, machineId, cpu, mem, disk,
+                ip, lastNum, uid, cpu, mem, disk,
                 status: STATUS.INIT,
                 initTime: time,
                 updateTime: time
@@ -57,17 +57,17 @@
             .then((data) => {
                 return data.insertedId;
             });
-            return { id: insertedId, ip, time };
+            return { id: insertedId, uid, ip };
         },
 
         updateOne: async (info) => {
             if (!info || !collection) return;
 
-            let time = new Date().getTime();
-            let { machineId, cpu, mem, disk } = info;
+            let time = Date.now();
+            let { uid, cpu, mem, disk } = info;
             let updateId = await collection
             .findOneAndUpdate(
-                { machineId },
+                { uid },
                 { $set: {
                     cpu, mem, disk,
                     status: STATUS.ALIVE,
@@ -77,7 +77,7 @@
             .then((data) => {
                 return ((data.value) ? data.value._id : null);
             });
-            return { id: updateId, time };
+            return { id: updateId, uid, time };
         },
 
         updateStatus: async (filter, status) => {

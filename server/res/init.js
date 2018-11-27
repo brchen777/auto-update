@@ -22,10 +22,10 @@
                 return;
             }
     
-            let { id, ip } = result;
-            console.log(`* Node "${id}" get ip: "${ip}"`);
+            let { uid, ip } = result;
+            console.log(`* Node "${uid}" get ip: "${ip}"`);
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.write(JSON.stringify({ ip }));
+            res.write(JSON.stringify(result));
             res.end();
         });
     };

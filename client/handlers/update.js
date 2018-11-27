@@ -15,7 +15,7 @@
 
     module.exports = async (fileName) => {
         let contentDirName = '__content';
-        let packPath = path.resolve(workingRoot, `${destPath}/__pack_${new Date().getTime()}`);
+        let packPath = path.resolve(workingRoot, `${destPath}/__pack_${Date.now()}`);
         let contentPath = `${packPath}/${contentDirName}`;
         fs.mkdirSync(contentPath, { recursive: true });
 
