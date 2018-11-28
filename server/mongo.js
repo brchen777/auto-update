@@ -90,6 +90,12 @@
             );
         },
 
+        deleteOne: async (filter) => {
+            if (!filter || Object(filter) !== filter || !collection) return;
+
+            collection.deleteOne(filter);
+        },
+
         deleteAll: () => {
             if (!collection) return;
 

@@ -11,11 +11,11 @@
 
     /** 
      * Repl update command
-     * @param {function} handler - broadcast function
-     * @param {string} eventName - event name
+     * @param {string} type - one: use send function, all: use broadcast function
+     * @param {string} handler - send or broadcast function
      * @example updateAll('result.tgz');
      * @example update('result.tgz', ['ca832f67f4c8e1d8bce7f4ee2ff9bfab']);
-     * @returns
+     * @returns {function}
     */
     module.exports = (type, handler) => {
         return (fileName, ...args) => {

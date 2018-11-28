@@ -62,8 +62,7 @@
     });
 
     wsServer
-    .on('connection', (ws, req) => {
-        const ip = req.connection.remoteAddress;
+    .on('connection', (ws) => {
         ws
         .on('message', (data) => {
             let dataParse = JSON.parse(data);
@@ -83,8 +82,8 @@
             }
         })
         .on('close', async () => {
-            await mongo.updateStatus({ ip }, STATUS.DIED);
             let uid = __getKeyByValue(wsServer.machineMap, ws);
+            await mongo.updateStatus({ uid }, STATUS.DIED);
             delete wsServer.machineMap[uid];
         });
     });
@@ -97,9 +96,7 @@
     REPL.context.updateAll = require('./repl/update')('all', wsServer.broadcast.bind(wsServer));
     REPL.context.reboot = require('./repl/reboot')('one', wsServer.send.bind(wsServer));
     REPL.context.rebootAll = require('./repl/reboot')('all', wsServer.broadcast.bind(wsServer));
-    REPL.context.test = () => {
-        wsServer.broadcast(JSON.stringify({ eventName: 'test', args: ['123'] }));
-    };
+    REPL.context.reset = require('./repl/reset')('one', wsServer.send.bind(wsServer));
 
     function __getKeyByValue(obj, value) {
         return Object.keys(obj).find(key => obj[key] === value);

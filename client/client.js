@@ -32,7 +32,8 @@ process.on('unhandledRejection', (err) => {
 
     const __handlers = {
         __system_update: require('./handlers/update'),
-        __system_reboot: require('./handlers/reboot')
+        __system_reboot: require('./handlers/reboot'),
+        __system_reset: require('./handlers/reset')
     };
 
     if (cluster.isMaster) {
