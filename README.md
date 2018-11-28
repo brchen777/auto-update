@@ -91,6 +91,12 @@
     Example:
     > reboot(['ca832f67f4c8e1d8bce7f4ee2ff9bfab']);
 
+    (6) Send designated client to reset ip:
+    > reset(uid_array);
+
+    Example:
+    > reset(['ca832f67f4c8e1d8bce7f4ee2ff9bfab']);
+
     * Note: After unzip package, client will run "update.sh", so you should prepare "update.sh" in your source files path.
 
 #### Client Side ####
