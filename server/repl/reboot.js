@@ -8,7 +8,7 @@
      * @param {function} handler - broadcast function
      * @param {string} eventName - event name
      * @example rebootAll();
-     * @example reboot('ca832f67f4c8e1d8bce7f4ee2ff9bfab');
+     * @example reboot(['ca832f67f4c8e1d8bce7f4ee2ff9bfab']);
      * @returns
     */
     module.exports = (type, handler) => {
@@ -21,8 +21,10 @@
             consoleLog('System reboot');
             let eventName = '__system_reboot';
             if (type === 'one') {
-                let [uid, ...otherArgs] = args;
-                handler(uid, JSON.stringify({ eventName, args: [...otherArgs] }));
+                let [uids, ...otherArgs] = args;
+                uids.forEach((uid) => {
+                    handler(uid, JSON.stringify({ eventName, args: [...otherArgs] }));
+                });
             }
             else if (type === 'all') {
                 handler(JSON.stringify({ eventName, args: [...args] }));

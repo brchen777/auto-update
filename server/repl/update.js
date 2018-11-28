@@ -14,7 +14,7 @@
      * @param {function} handler - broadcast function
      * @param {string} eventName - event name
      * @example updateAll('result.tgz');
-     * @example update('ca832f67f4c8e1d8bce7f4ee2ff9bfab', 'result.tgz');
+     * @example update('result.tgz', ['ca832f67f4c8e1d8bce7f4ee2ff9bfab']);
      * @returns
     */
     module.exports = (type, handler) => {
@@ -33,8 +33,10 @@
             consoleLog('System update');
             let eventName = '__system_update';
             if (type === 'one') {
-                let [uid, ...otherArgs] = args;
-                handler(uid, JSON.stringify({ eventName, args: [fileName, ...otherArgs] }));
+                let [uids, ...otherArgs] = args;
+                uids.forEach((uid) => {
+                    handler(uid, JSON.stringify({ eventName, args: [fileName, ...otherArgs] }));
+                });
             }
             else if (type === 'all') {
                 handler(JSON.stringify({ eventName, args: [fileName, ...args] }));
