@@ -19,7 +19,7 @@
             }
 
             consoleLog('System reboot');
-            let eventName = '__system_reboot';
+            let eventName = '__system-reboot';
             if (type === 'one') {
                 let [uids, ...otherArgs] = args;
                 uids.forEach((uid) => {

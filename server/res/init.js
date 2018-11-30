@@ -11,7 +11,7 @@
             req.on('data', function (data) {
                 body += data;
             });
-    
+
             req.on('end', function () {
                 resolve(JSON.parse(body));
             });
@@ -22,8 +22,9 @@
                 error404(req, res, true);
                 return;
             }
-    
-            let { uid, ip } = result;
+
+            let { uid } = info;
+            let { ip } = result;
             consoleLog(`Node "${uid}" get ip: "${ip}"`);
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.write(JSON.stringify(result));

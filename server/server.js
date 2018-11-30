@@ -22,7 +22,9 @@
         error404: require('./res/error/404'),
         
         event: {
-            '__client-update-info': require('./event').updateClientInfo
+            '__client-send-sysInfo': require('./event').clientSendSysInfo,
+            '__client-update-finish': require('./event').clientUpdateFinish,
+            '__client-update-error': require('./event').clientUpdateError
         }
     };
     
@@ -68,22 +70,24 @@
             let dataParse = JSON.parse(data);
             if (Object(dataParse) !== dataParse) return;
 
-            let { eventName, args } = JSON.parse(data);
-            if (eventName === '__client-client-open') {
+            let { eventName, args=[] } = dataParse;
+            if (eventName === '__client-ws-open') {
                 let [uid] = args;
+                ws.uid = uid;
                 wsServer.machineMap[uid] = ws;
             }
             else {
+                let { uid } = ws;
                 let handlerGroup = HANDLERS['event'];
                 let handler = handlerGroup[eventName];
                 if (typeof handler !== 'function') return;
 
-                handler(...args);
+                handler(uid, ...args);
             }
         })
         .on('close', async () => {
-            let uid = __getKeyByValue(wsServer.machineMap, ws);
-            await mongo.updateStatus({ uid }, STATUS.DIED);
+            let { uid } = ws;
+            await mongo.updateOne({ uid }, { status: STATUS.DIED });
             delete wsServer.machineMap[uid];
         });
     });
@@ -97,8 +101,4 @@
     REPL.context.reboot = require('./repl/reboot')('one', wsServer.send.bind(wsServer));
     REPL.context.rebootAll = require('./repl/reboot')('all', wsServer.broadcast.bind(wsServer));
     REPL.context.reset = require('./repl/reset')('one', wsServer.send.bind(wsServer));
-
-    function __getKeyByValue(obj, value) {
-        return Object.keys(obj).find(key => obj[key] === value);
-    }
 })();

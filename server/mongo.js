@@ -23,7 +23,7 @@
         },
 
         insertOne: async (info) => {
-            if (!info || !collection) return;
+            if (!__isObject(info) || !collection) return;
 
             let { uid, cpu, mem, disk } = info;
             const nodeData = await collection.findOne({ uid });
@@ -57,41 +57,28 @@
             .then((data) => {
                 return data.insertedId;
             });
-            return { id: insertedId, uid, ip };
+            return { id: insertedId, ip };
         },
 
-        updateOne: async (info) => {
-            if (!info || !collection) return;
+        updateOne: async (filter, info) => {
+            if (!__isObject(filter) || !__isObject(info) || !collection) return;
 
             let time = Date.now();
-            let { uid, cpu, mem, disk } = info;
-            let updateId = await collection
+            info.updateTime = time;
+            let node = await collection
             .findOneAndUpdate(
-                { uid },
-                { $set: {
-                    cpu, mem, disk,
-                    status: STATUS.ALIVE,
-                    updateTime: time
-                }}
+                filter,
+                { $set: info },
+                { returnNewDocument: true }
             )
             .then((data) => {
-                return ((data.value) ? data.value._id : null);
+                return data.value;
             });
-            return { id: updateId, uid, time };
-        },
-
-        updateStatus: async (filter, status) => {
-            if (!filter || Object(filter) !== filter || !collection) return;
-
-            collection
-            .updateOne(
-                filter,
-                { $set: { status } }
-            );
+            return node;
         },
 
         deleteOne: async (filter) => {
-            if (!filter || Object(filter) !== filter || !collection) return;
+            if (!__isObject(filter) || !collection) return;
 
             collection.deleteOne(filter);
         },
@@ -102,6 +89,9 @@
             collection.deleteMany({});
         }
     }
-
     module.exports = exportObj;
+
+    function __isObject(data) {
+        return (data && (Object(data) === data));
+    }
 })();

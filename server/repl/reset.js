@@ -19,7 +19,7 @@
             }
 
             consoleLog('System reset');
-            let eventName = '__system_reset';
+            let eventName = '__system-reset';
             if (type === 'one') {
                 let [uids, ...otherArgs] = args;
                 uids.forEach((uid) => {

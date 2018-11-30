@@ -31,7 +31,7 @@
             }
             
             consoleLog('System update');
-            let eventName = '__system_update';
+            let eventName = '__system-update';
             if (type === 'one') {
                 let [uids, ...otherArgs] = args;
                 uids.forEach((uid) => {
