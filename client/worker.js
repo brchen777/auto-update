@@ -130,7 +130,7 @@
                 reject('System post error');
             }
 
-            let { uid, ip } = JSON.parse(res.body);
+            let { ip } = JSON.parse(res.body);
             consoleLog(`Client get ip: "${ip}"...`);
             shell.exec(COMMAND.SET_DHCP(ip), { shell: bashPath });
             shell.exec(COMMAND.RESTART_NETWORK, { shell: bashPath });
@@ -155,23 +155,20 @@
     }
 
     async function getSysInfo() {
-        // get uid
-        const p1 = Promise.resolve(uid);
-
         // get cpu info
-        const p2 = Promise.resolve(os.cpus());
+        const p1 = Promise.resolve(os.cpus());
 
         // get memory info
-        const p3 = si.mem().catch((err) => {
+        const p2 = si.mem().catch((err) => {
             consoleError(err);
         });
 
         // get disk info
-        const p4 = si.fsSize().catch((err) => {
+        const p3 = si.fsSize().catch((err) => {
             consoleError(err);
         });
 
-        let [uid, cpu, mem, disk] = await Promise.all([p1, p2, p3, p4]);
+        let [cpu, mem, disk] = await Promise.all([p1, p2, p3])
         return { uid, cpu, mem, disk };
     }
 
