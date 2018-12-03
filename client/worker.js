@@ -87,7 +87,7 @@
         .on('error', (e) => {
             runReject(e.message);
         });
-        setTimeout(sendSysInfo, updateTimeout, ws, uid);
+        setTimeout(sendSysInfo, updateTimeout, ws);
         return runPromise;
     }
 
@@ -142,33 +142,36 @@
         });
     }
 
-    async function sendSysInfo(ws, uid) {
+    async function sendSysInfo(ws) {
         let sendResolve;
         const sendPromise = new Promise((resolve) => { sendResolve = resolve; });
-        let sysInfo = await getSysInfo(uid);
+        let sysInfo = await getSysInfo();
         ws.send(JSON.stringify({ eventName: '__client-send-sysInfo', args: [sysInfo] }), () => {
             consoleLog('Send sysInfo...');
-            setTimeout(sendSysInfo, updateTimeout, ws, uid);
+            setTimeout(sendSysInfo, updateTimeout, ws);
             sendResolve();
         });
         return sendPromise;
     }
 
-    async function getSysInfo(uid) {
+    async function getSysInfo() {
+        // get uid
+        const p1 = Promise.resolve(uid);
+
         // get cpu info
-        const p1 = Promise.resolve(os.cpus());
+        const p2 = Promise.resolve(os.cpus());
 
         // get memory info
-        const p2 = si.mem().catch((err) => {
+        const p3 = si.mem().catch((err) => {
             consoleError(err);
         });
 
         // get disk info
-        const p3 = si.fsSize().catch((err) => {
+        const p4 = si.fsSize().catch((err) => {
             consoleError(err);
         });
 
-        let [cpu, mem, disk] = await Promise.all([p1, p2, p3]);
+        let [uid, cpu, mem, disk] = await Promise.all([p1, p2, p3, p4]);
         return { uid, cpu, mem, disk };
     }
 
