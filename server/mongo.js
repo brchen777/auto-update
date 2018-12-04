@@ -8,6 +8,7 @@
     const { host: clientHost } = config.conf.client;
     const { host: dbHost, port: dbPort, dbName, colName } = config.conf.server.mongodb;
     const dbUrl = `mongodb://${dbHost}:${dbPort}/`;
+    const maxLastNum = 240;
     let collection = null;
 
     let exportObj = {
@@ -32,8 +33,8 @@
             let time = Date.now();
 
             // get max lastNum
-            const maxLastNum = await collection
-            .find({ lastNum: { $lt: 253, $gt: 1 }})
+            const maxDbLastNum = await collection
+            .find({ lastNum: { $lt: maxLastNum, $gt: 1 }})
             .sort({ lastNum: -1 })
             .limit(1)
             .toArray()
@@ -41,7 +42,7 @@
                 return ((data) ? data.lastNum : 2);
             });
 
-            let lastNum = (253 > maxLastNum && maxLastNum > 1) ? maxLastNum + 1 : 2;
+            let lastNum = (maxLastNum > maxDbLastNum && maxDbLastNum > 1) ? maxDbLastNum + 1 : 2;
             let ipClasses = clientHost.split('.');
             ipClasses.splice(-1, 1, lastNum.toString());
             let ip = ipClasses.join('.');
