@@ -127,7 +127,8 @@
         postJson(initUrl, sysInfo)
         .then((res) => {
             if (res.statusCode !== 200) {
-                reject('System post error');
+                reject('Client get ip error (post error)');
+                return;
             }
 
             let { ip } = JSON.parse(res.body);
