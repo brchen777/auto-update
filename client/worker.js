@@ -73,7 +73,7 @@
 
             let { eventName, args=[] } = dataParse;
             if (eventName === '__system-update') {
-                args = [ws, uid, ...args];
+                args = [ws, ...args];
             }
 
             let handler = HANDLERS[eventName];

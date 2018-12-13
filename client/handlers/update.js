@@ -17,7 +17,7 @@
     const packPath = path.resolve(workingRoot, `${destPath}/__pack_${Date.now()}`);
     const contentPath = `${packPath}/${contentDirName}`;
     
-    module.exports = (ws, uid, fileName) => {
+    module.exports = (ws, fileName) => {
         fs.mkdirSync(contentPath, { recursive: true });
 
         http
@@ -84,13 +84,13 @@
 
         // run shell script
         function __runSH([msgOut=[], msgErr=[]]) {
-            let shFilePath = `./${contentDirName}/update.sh`;
+            let shFilePath = `./update.sh`;
             let shResolve, shReject;
             const shPromise = new Promise((resolve, reject) => {
                 shResolve = resolve;
                 shReject = reject;
             });
-            shell.exec(COMMAND.RUN_SH(shFilePath), { shell: bashPath, cwd: packPath }, (code, stdout, stderr) => {
+            shell.exec(COMMAND.RUN_SH(shFilePath), { shell: bashPath, cwd: contentPath }, (code, stdout, stderr) => {
                 (code !== 0)
                     ? shReject([[...msgOut, stdout, 'Run shell script error'], [...msgErr, stderr]])
                     : shResolve([[...msgOut, stdout, 'Run shell script finish'], [...msgErr, stderr]]);
