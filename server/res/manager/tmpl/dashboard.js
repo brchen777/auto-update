@@ -28,7 +28,8 @@
             <div class='progress'><div class='bar'></div></div>
             <div class='percentage'>\${diskRate}</div>
         </div>
-        <div class='update-time'>\${updateTime}</div>
+        <div class='alive-time' title='alive time'>alive: \${aliveTime}</div>
+        <div class='last-update-time' title='last update time'>last update: \${lastUpdateTime}</div>
     </li>
 </script>`;
     };

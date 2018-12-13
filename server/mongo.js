@@ -52,7 +52,8 @@
                 uid, ip, lastNum, cpu, mem, disk,
                 status: STATUS.INIT,
                 initTime: time,
-                updateTime: time
+                aliveTime: time,
+                lastUpdateTime: time
             })
             .then((data) => {
                 return data.insertedId;
@@ -74,7 +75,7 @@
             if (!__isObject(filter) || !__isObject(info) || !collection) return;
 
             let time = Date.now();
-            info.updateTime = time;
+            info.aliveTime = time;
             let node = await collection
             .findOneAndUpdate(
                 filter,

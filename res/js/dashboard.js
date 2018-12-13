@@ -3,8 +3,10 @@
     
     const { moment, pump } = window;
     const UNITS = { DAY: 86400, HOUR: 3600, MINUTE: 60, SECOND: 1 };
-    const healthyBound = 10 * UNITS.MINUTE;
-    const warningBound = 20 * UNITS.MINUTE;
+    const aliveHealthyBound = 10 * UNITS.MINUTE;
+    const aliveWarningBound = 20 * UNITS.MINUTE;
+    const progressWarningBound = 80;
+    const progressBusyBound = 40;
     const container = $('#info-container');
     const tpl = $('script[data-tpl="server-item"]').html();
 
@@ -29,22 +31,38 @@
             ratios.mem = Math.round(serverInfo.mem);
             ratios.disk = Math.round(ratios.disk / diskIds.length);
 
-            let diff = moment().unix() - serverInfo.time;
-            let timeStr = '';
-
-            if (diff < UNITS.MINUTE) {
-                timeStr = `${diff} second${diff > 1 ? 's' : ''} ago`;
+            let aliveDiff = moment().unix() - serverInfo.aliveTime;
+            let aliveTimeStr = '';
+            if (aliveDiff < UNITS.MINUTE) {
+                aliveTimeStr = `${aliveDiff} second${aliveDiff > 1 ? 's' : ''} ago`;
             }
-            else if (diff < UNITS.HOUR) {
-                let diff_reduced = (diff / UNITS.MINUTE) | 0;
-                timeStr = `${diff_reduced} minute${diff_reduced > 1 ? 's' : ''} ago`;
+            else if (aliveDiff < UNITS.HOUR) {
+                let diff_reduced = (aliveDiff / UNITS.MINUTE) | 0;
+                aliveTimeStr = `${diff_reduced} minute${diff_reduced > 1 ? 's' : ''} ago`;
             }
-            else if (diff < UNITS.DAY) {
-                let diff_reduced = (diff / UNITS.HOUR) | 0;
-                timeStr = `${diff_reduced} hour${diff_reduced > 1 ? 's' : ''} ago`;
+            else if (aliveDiff < UNITS.DAY) {
+                let diff_reduced = (aliveDiff / UNITS.HOUR) | 0;
+                aliveTimeStr = `${diff_reduced} hour${diff_reduced > 1 ? 's' : ''} ago`;
             }
             else {
-                timeStr = moment.unix(serverInfo.time).format('YYYY/MM/DD HH:mm');
+                aliveTimeStr = moment.unix(serverInfo.time).format('YYYY/MM/DD HH:mm');
+            }
+
+            let lastUpdateDiff = moment().unix() - serverInfo.aliveTime;
+            let lastUpdateTimeStr = '';
+            if (lastUpdateDiff < UNITS.MINUTE) {
+                lastUpdateTimeStr = `${lastUpdateDiff} second${lastUpdateDiff > 1 ? 's' : ''} ago`;
+            }
+            else if (lastUpdateDiff < UNITS.HOUR) {
+                let diff_reduced = (lastUpdateDiff / UNITS.MINUTE) | 0;
+                lastUpdateTimeStr = `${diff_reduced} minute${diff_reduced > 1 ? 's' : ''} ago`;
+            }
+            else if (lastUpdateDiff < UNITS.DAY) {
+                let diff_reduced = (lastUpdateDiff / UNITS.HOUR) | 0;
+                lastUpdateTimeStr = `${diff_reduced} hour${diff_reduced > 1 ? 's' : ''} ago`;
+            }
+            else {
+                lastUpdateTimeStr = moment.unix(serverInfo.time).format('YYYY/MM/DD HH:mm');
             }
 
             let item = $.tmpl(tpl, {
@@ -54,13 +72,14 @@
                 cpuRate: `${ratios.cpu}%`,
                 memRate: `${ratios.mem}%`,
                 diskRate: `${ratios.disk}%`,
-                updateTime: timeStr
+                aliveTime: aliveTimeStr,
+                lastUpdateTime: lastUpdateTimeStr
             });
 
-            if (diff < healthyBound) {
+            if (aliveDiff < aliveHealthyBound) {
                 item.removeClass('warn').removeClass('danger');
             }
-            else if (diff >= healthyBound && diff <= warningBound) {
+            else if (aliveDiff >= aliveHealthyBound && aliveDiff <= aliveWarningBound) {
                 item.removeClass('danger').addClass('warn');
             }
             else {
@@ -72,10 +91,10 @@
                 let type = target.attr('data-inspect');
                 target.find('.progress > .bar').css({width:`${ratios[type]}%`});
 
-                if (ratios[type] >= 80) {
+                if (ratios[type] >= progressWarningBound) {
                     target.find('.progress > .bar').addClass('warning');
                 }
-                else if (80 > ratios[type] && ratios[type] >= 40) {
+                else if (progressWarningBound > ratios[type] && ratios[type] >= progressBusyBound) {
                     target.find('.progress > .bar').addClass('busy');
                 }
                 else {
@@ -102,7 +121,8 @@
                     cpuRate: 0,
                     memRate: 0,
                     diskRate: 0,
-                    updateTime: ''
+                    aliveTime: '',
+                    lastUpdateTime: ''
                 }).appendTo(rowContainer);
             }
 

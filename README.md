@@ -32,7 +32,7 @@
             "filePath": @string,            // package download path
             "preCommand": [ @string, ... ], // pre-command for each command line
             "delayTimeout": @int,           // init delay timeout at the first time (millisecond)
-            "updateTimeout": @int           // update timeout for each sending system info event (millisecond)
+            "sendTimeout": @int             // timeout for each sending system info event (millisecond)
         }
     }
     ```
@@ -62,7 +62,7 @@
             "filePath": "./file/download",
             "preCommand": ["sudo"],         // use sudo in linux system
             "delayTimeout": 5000,
-            "updateTimeout": 30000
+            "sendTimeout": 30000
         }
     }
     ```

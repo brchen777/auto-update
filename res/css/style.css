@@ -43,4 +43,5 @@ main { z-index:2; position:relative; width:100%; }
                                 .info-bar .progress .bar.normal { background:#088608; }
 
                         .server-item .info-bar .percentage { width:4ch; text-align:right; margin:0 2ch 0 1ch; }
-                    .server-item .update-time { font-size:0.7em; margin-top:10px; text-align:right; }
+                    .server-item .alive-time { font-size:0.7em; margin-top:10px; text-align:right; }
+                    .server-item .last-update-time { font-size:0.7em; margin-top:10px; text-align:right; }

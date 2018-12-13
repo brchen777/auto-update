@@ -17,7 +17,12 @@
             consoleLog(`Node "${uid}" send sysInfo finish`);
         },
         clientUpdateFinish: async (uid, stdout, stderr) => {
-            let result = await mongo.updateOne({ uid }, { updateSuccess: true, stdout, stderr });
+            let info = {
+                updateSuccess: true,
+                lastUpdateTime: Date.now(),
+                stdout, stderr
+            };
+            let result = await mongo.updateOne({ uid }, info);
             if (!result) {
                 consoleError(`Node "${uid}" update error (mongodb error)`);
                 return;
@@ -26,7 +31,11 @@
             consoleLog(`Node "${uid}" update finish`);
         },
         clientUpdateError: async (uid, stdout, stderr) => {
-            let result = await mongo.updateOne({ uid }, { updateSuccess: false, stdout, stderr });
+            let info = {
+                updateSuccess: true,
+                stdout, stderr
+            };
+            let result = await mongo.updateOne({ uid }, info);
             if (!result) {
                 consoleError(`Node "${uid}" update error (mongodb error)`);
                 return;

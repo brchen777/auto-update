@@ -64,8 +64,11 @@
                 result.disk[id] = roundTo(disk.use, 2);
             });
 
-            // time
-            result.time = roundTo(node.updateTime / 1000, 0);
+            // alive time
+            result.aliveTime = roundTo(node.aliveTime / 1000, 0);
+
+            // last update time
+            result.lastUpdateTime = roundTo(node.lastUpdateTime / 1000, 0);
 
             output.push(result);
         });

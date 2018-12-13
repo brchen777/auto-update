@@ -18,7 +18,7 @@
     const hash = crypto.createHash('md5');
     const { bashPath, workingRoot } = config.conf.runtime;
     const { host: serverHost, port: serverPort } = config.conf.server;
-    const { detectTimeout, delayTimeout, updateTimeout } = config.conf.client;
+    const { detectTimeout, delayTimeout, sendTimeout } = config.conf.client;
     const initUrl = `http://${serverHost}:${serverPort}/init`;
     const initFlagPath = `${workingRoot}/__init`;
     const wsUrl = `ws://${serverHost}:${serverPort}`;
@@ -87,7 +87,7 @@
         .on('error', (e) => {
             runReject(e.message);
         });
-        setTimeout(sendSysInfo, updateTimeout, ws);
+        setTimeout(sendSysInfo, sendTimeout, ws);
         return runPromise;
     }
 
@@ -149,7 +149,7 @@
         let sysInfo = await getSysInfo();
         ws.send(JSON.stringify({ eventName: '__client-send-sysInfo', args: [sysInfo] }), () => {
             consoleLog('Send sysInfo...');
-            setTimeout(sendSysInfo, updateTimeout, ws);
+            setTimeout(sendSysInfo, sendTimeout, ws);
             sendResolve();
         });
         return sendPromise;

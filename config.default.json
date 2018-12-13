@@ -21,6 +21,6 @@
         "preCommand": ["sudo"],
         "detectTimeout": 2000,
         "delayTimeout": 5000,
-        "updateTimeout": 30000
+        "sendTimeout": 30000
     }
 }
