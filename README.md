@@ -19,7 +19,11 @@
                 "host": @string,            // db host
                 "port": @int,               // db port
                 "dbName": @string,          // db name in mongodb
-                "colName": @string          // collection name in mongodb
+                "colName": @string,         // collection name in mongodb
+                "maxLastNum": @int          // maximum last number for selecting ip range in mongodb
+            },
+            "socket": {
+                "port": @int                // socket port for remote repl
             }
         },
         "client": {
@@ -45,7 +49,11 @@
                 "host": "127.0.0.1",
                 "port": 27017,
                 "dbName": "auto-update",
-                "colName": "node"
+                "colName": "node",
+                "maxLastNum": 100
+            },
+            "socket": {
+                "port": 1235
             }
         },
         "client": {

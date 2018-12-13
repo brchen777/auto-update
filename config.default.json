@@ -11,7 +11,7 @@
             "maxLastNum": 100
         },
         "socket": {
-            "port": 2345
+            "port": 1235
         }
     },
     "client": {
