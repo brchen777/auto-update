@@ -43,7 +43,7 @@
         Promise.resolve()
         .then(() => {
             if (!handler) {
-                return HANDLERS.ERROR404(req, res, true);
+                return HANDLERS.error404(req, res, true);
             }
             else {
                 return handler(req, res, remainUrl);
@@ -56,7 +56,7 @@
         })
         .catch((err) => {
             consoleError(err);
-            HANDLERS.ERROR404(req, res, true);
+            HANDLERS.error404(req, res, true);
         });
     });
     httpServer.listen(serverPort, serverHost);
