@@ -2,6 +2,7 @@
     'use strict';
 
     require('../prepenv');
+    const net = require('net');
     const url = require('url');
     const repl = require('repl');
     const http = require('http');
@@ -10,18 +11,22 @@
     const pitaya = require('pitayajs');
     const config = require('json-cfg').trunk;
     const { STATUS } = require('../lib/constants');
+    const { consoleError } = require('../lib/misc');
 
-    const { host, port } = config.conf.server;
+    const { host: serverHost, port: serverPort, filePath: destPath } = config.conf.server;
+    const { port: socketPort } = config.conf.server.socket;
     const HANDLERS = {
         get: {
-            '/file': require('./res/file')
+            '/file': require('./res/file')(destPath),
+            '/res': require('./res/file')('./res'),
+            '/manager': require('./res/manager/manager')
         },
         post: {
             '/init': require('./res/init')
         },
         error404: require('./res/error/404'),
         
-        event: {
+        event: {                 
             '__client-send-sysInfo': require('./event').clientSendSysInfo,
             '__client-update-finish': require('./event').clientUpdateFinish,
             '__client-update-error': require('./event').clientUpdateError
@@ -34,14 +39,27 @@
         let urlParse = url.parse(req.url);
         let { comp: dispatch, url: remainUrl } = pitaya.net.HTTPPullPathComp(urlParse.pathname);
         let handler = handlerGroup[dispatch];
-        if (handler === undefined) {
-            HANDLERS.error404(req, res, true);
-            return;
-        }
 
-        handler(req, res, remainUrl);
+        Promise.resolve()
+        .then(() => {
+            if (!handler) {
+                return HANDLERS.ERROR404(req, res, true);
+            }
+            else {
+                return handler(req, res, remainUrl);
+            }
+        })
+        .then(() => {
+            if (!res.finished) {
+                res.end();
+            }
+        })
+        .catch((err) => {
+            consoleError(err);
+            HANDLERS.ERROR404(req, res, true);
+        });
     });
-    httpServer.listen(port, host);
+    httpServer.listen(serverPort, serverHost);
 
     const wsServer = new WebSocket.Server({ server: httpServer, handshakeTimeout: 5000 });
     Object.assign(wsServer, {
@@ -70,7 +88,7 @@
             let dataParse = JSON.parse(data);
             if (Object(dataParse) !== dataParse) return;
 
-            let { eventName, args=[] } = dataParse;
+            let { eventName, args = [] } = dataParse;
             if (eventName === '__client-ws-open') {
                 let [uid] = args;
                 ws.uid = uid;
@@ -101,4 +119,18 @@
     REPL.context.reboot = require('./repl/reboot')('one', wsServer.send.bind(wsServer));
     REPL.context.rebootAll = require('./repl/reboot')('all', wsServer.broadcast.bind(wsServer));
     REPL.context.reset = require('./repl/reset')('one', wsServer.send.bind(wsServer));
+
+    // remote socket api
+    net.createServer((socket) => {
+        const replInst = repl.start({
+            prompt: 'Node.js via Unix socket> ',
+            input: socket,
+            output: socket
+        })
+        .on('exit', () => {
+            socket.end();
+        });
+    
+        Object.assign(replInst.context, REPL.context);
+    }).listen(socketPort, serverHost);
 })();

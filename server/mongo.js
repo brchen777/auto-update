@@ -6,9 +6,8 @@
     const { STATUS } = require('../lib/constants');
 
     const { host: clientHost } = config.conf.client;
-    const { host: dbHost, port: dbPort, dbName, colName } = config.conf.server.mongodb;
+    const { host: dbHost, port: dbPort, dbName, colName, maxLastNum = 100 } = config.conf.server.mongodb;
     const dbUrl = `mongodb://${dbHost}:${dbPort}/`;
-    const maxLastNum = 240;
     let collection = null;
 
     let exportObj = {
@@ -59,6 +58,16 @@
                 return data.insertedId;
             });
             return { id: insertedId, ip };
+        },
+
+        find: async (filter, sort) => {
+            if (!__isObject(filter) || !__isObject(sort) || !collection) return;
+
+            let nodes = await collection
+            .find(filter)
+            .sort(sort)
+            .toArray();
+            return nodes;
         },
 
         updateOne: async (filter, info) => {

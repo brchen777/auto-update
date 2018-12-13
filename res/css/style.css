@@ -1,0 +1,46 @@
+html { width:100%; height:100%; }
+body { font-size:16px; width:100%; background:#FFF; }
+
+
+main { z-index:2; position:relative; width:100%; }
+    main > nav {
+        position:fixed; left:0; top:0;
+        width:80px; height:100vh; overflow:auto;
+        background:linear-gradient(75deg, #216A9B, #2384C4);
+        box-shadow:5px 0 10px 0 #AAA;
+    }
+    main > .viewport { margin-left:80px; width:calc(100% - 80px); }
+        .viewport .server-item-container { width:calc(100% - 40px * 2); margin:60px 40px; }
+            .viewport .server-item-container ul.server-item-row {
+                display:flex; justify-content:space-between; flex-wrap:wrap;
+                width:100%; margin:0 0 25px; padding:0;
+            }
+            .viewport .server-item-container ul.server-item-row:last-child { margin-bottom:0; }
+                .viewport .server-item-container ul.server-item-row > li.server-item {
+                    display:inline-block; padding:15px;
+                    width:calc(300px - 20px - 15px * 2); overflow:hidden;
+                    border-radius:8px; color:#FFF; font-family:"Lucida Console", Monaco, monospace;
+                    background:linear-gradient(75deg, #229985, #23C2A7); box-shadow:1px 5px 6px 0 #AAA;
+                }
+                .viewport .server-item-container ul.server-item-row > li.server-item.inactive { visibility:hidden; pointer-events:none; }
+                .viewport .server-item-container ul.server-item-row > li.server-item.warn {
+                    background:linear-gradient(75deg, #999923, #C2C225); box-shadow:1px 5px 6px 0 #AAA;
+                }
+                .viewport .server-item-container ul.server-item-row > li.server-item.danger {
+                    background:linear-gradient(75deg, #992323, #C22727); box-shadow:1px 5px 6px 0 #AAA;
+                }
+                    .server-item .server-id { font-size:1.2em; font-weight:bolder; margin-bottom:10px; }
+                    .server-item .machine-id { font-size:0.8em; font-weight:bolder; margin-bottom:10px; }
+                    .server-item .info-bar {
+                        display:flex; flex-direction:row; flex-wrap:nowrap;
+                        font-size:0.9em; align-items:center;
+                    }
+                        .server-item .info-bar .logo { text-align:right; margin:0 1ch 0 2ch }
+                        .server-item .info-bar .progress { flex-grow:1; position:relative; height:0.5em; background:#FFF; }
+                            .info-bar .progress .bar { position:absolute; left:0; top:0; height:100%; width:70%; }
+                                .info-bar .progress .bar.warning { background:#F00; }
+                                .info-bar .progress .bar.busy { background:#FFC800; }
+                                .info-bar .progress .bar.normal { background:#088608; }
+
+                        .server-item .info-bar .percentage { width:4ch; text-align:right; margin:0 2ch 0 1ch; }
+                    .server-item .update-time { font-size:0.7em; margin-top:10px; text-align:right; }
