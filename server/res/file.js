@@ -45,7 +45,7 @@
             });
     
             let ext = fileName.lastIndexOf('.');
-            ext = (ext > 0) ? path.substring(ext + 1) : '';
+            ext = (ext > 0) ? reqPath.substring(ext + 1) : '';
             let contentType = MINE_MAP[ext] || 'application/octet-stream';
             res.writeHead(200, { 'Content-Type': contentType });
             res.on('drain', () => {

@@ -49,11 +49,11 @@
                 return handler(req, res, remainUrl);
             }
         })
-        .then(() => {
-            if (!res.finished) {
-                res.end();
-            }
-        })
+        // .then(() => {
+        //     if (!res.finished) {
+        //         res.end();
+        //     }
+        // })
         .catch((err) => {
             consoleError(err);
             HANDLERS.error404(req, res, true);
