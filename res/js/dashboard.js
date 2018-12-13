@@ -48,7 +48,7 @@
                 aliveTimeStr = moment.unix(serverInfo.time).format('YYYY/MM/DD HH:mm');
             }
 
-            let lastUpdateDiff = moment().unix() - serverInfo.aliveTime;
+            let lastUpdateDiff = moment().unix() - serverInfo.lastUpdateTime;
             let lastUpdateTimeStr = '';
             if (lastUpdateDiff < UNITS.MINUTE) {
                 lastUpdateTimeStr = `${lastUpdateDiff} second${lastUpdateDiff > 1 ? 's' : ''} ago`;
