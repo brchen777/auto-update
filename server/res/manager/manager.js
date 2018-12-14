@@ -66,6 +66,9 @@
             // alive time
             result.aliveTime = roundTo(node.aliveTime / 1000, 0);
 
+            // last pack name
+            result.lastPackName = node.lastPackName;
+
             // last update time
             result.lastUpdateTime = roundTo(node.lastUpdateTime / 1000, 0);
 

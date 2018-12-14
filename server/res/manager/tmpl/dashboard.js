@@ -29,6 +29,7 @@
             <div class='percentage'>\${diskRate}</div>
         </div>
         <div class='alive-time' title='alive time'>alive: \${aliveTime}</div>
+        <div class='last-pack-name' title='last pack name'>last pack: \${lastPackName}</div>
         <div class='last-update-time' title='last update time'>last update: \${lastUpdateTime}</div>
     </li>
 </script>`;

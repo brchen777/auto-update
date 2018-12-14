@@ -73,6 +73,7 @@
                 memRate: `${ratios.mem}%`,
                 diskRate: `${ratios.disk}%`,
                 aliveTime: aliveTimeStr,
+                lastPackName: serverInfo.lastPackName,
                 lastUpdateTime: lastUpdateTimeStr
             });
 
@@ -122,6 +123,7 @@
                     memRate: 0,
                     diskRate: 0,
                     aliveTime: '',
+                    lastPackName: '',
                     lastUpdateTime: ''
                 }).appendTo(rowContainer);
             }

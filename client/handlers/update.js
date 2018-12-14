@@ -14,38 +14,63 @@
     const { filePath: destPath } = config.conf.client;
     const downloadUrl = `http://${serverHost}:${serverPort}/file`;
     const contentDirName = '__content';
-    const packPath = path.resolve(workingRoot, `${destPath}/__pack_${Date.now()}`);
-    const contentPath = `${packPath}/${contentDirName}`;
-    
+
     module.exports = (ws, fileName) => {
+        let ext = fileName.lastIndexOf('.');
+        const baseName = (ext > 0) ? fileName.substring(0, ext) : fileName;
+        const packPath = path.resolve(workingRoot, `${destPath}/${baseName}`);
+        const contentPath = `${packPath}/${contentDirName}`;
         fs.mkdirSync(contentPath, { recursive: true });
 
-        http
-        .get(`${downloadUrl}/${fileName}`, (res) => {
-            new Promise((resolve, reject) => {
-                // check response status code
-                (res.statusCode === 200) ? resolve(res) : reject([[], ['File path error']]);
-            })
-            .then(__downloadPack)
-            .then(__unzipPack)
-            .then(__runSH)
-            .then(([msgOuts, msgErrs]) => {
-                msgOuts = msgOuts.filter(Boolean);
-                msgErrs = msgErrs.filter(Boolean);
-                ws.send(JSON.stringify({ eventName: '__client-update-finish', args: [msgOuts.join('\n'), msgErrs.join('\n')] }));
-                consoleLog(...msgOuts, 'Update finish');
-                consoleError(...msgErrs);
-            })
-            .catch(([msgOuts, msgErrs]) => {
-                msgOuts = msgOuts.filter(Boolean);
-                msgErrs = msgErrs.filter(Boolean);
-                ws.send(JSON.stringify({ eventName: '__client-update-error', args: [msgOuts.join('\n'), msgErrs.join('\n')] }));
-                // remove package directory
-                fs.removeSync(packPath);
-                consoleLog(...msgOuts, 'Update error');
-                consoleError(...msgErrs);
-            });
+        Promise
+        .resolve(__main())
+        .then(([msgOuts, msgErrs])=>{
+            msgOuts = msgOuts.filter(Boolean);
+            msgErrs = msgErrs.filter(Boolean);
+            ws.send(JSON.stringify({ eventName: '__client-update-finish', args: [baseName, msgOuts.join('\n'), msgErrs.join('\n')] }));
+            consoleLog(...msgOuts, 'System update finish');
+            consoleError(...msgErrs);
+        })
+        .catch(([msgOuts, msgErrs]) => {
+            msgOuts = msgOuts.filter(Boolean);
+            msgErrs = msgErrs.filter(Boolean);
+            ws.send(JSON.stringify({ eventName: '__client-update-error', args: [baseName, msgOuts.join('\n'), msgErrs.join('\n')] }));
+            consoleLog(...msgOuts, 'System update error');
+            consoleError(...msgErrs);
         });
+
+        async function __main() {
+            try {
+                let res = await __getRequest();
+
+                let results = [];
+                results = await __downloadPack(res);
+                results = await __unzipPack(results);
+                results = await __runSH(results);
+                return results
+            }
+            catch (e) {
+                // delete package directory
+                fs.removeSync(packPath);
+                return e;
+            }
+        }
+
+        // get request
+        function __getRequest() {
+            let getResolve, getReject;
+            const getPromise = new Promise((resolve, reject) => {
+                getResolve = resolve;
+                getReject = reject;
+            });
+            http
+            .get(`${downloadUrl}/${fileName}`, (res) => {
+                (res.statusCode === 200)
+                    ? getResolve(res)
+                    : getReject([[], ['File path error']]);
+            });
+            return getPromise;
+        }
 
         // download package
         function __downloadPack(res) {

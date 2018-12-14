@@ -72,34 +72,28 @@
 
 3. Use Repl mode, you can use:
 
-    (1) Zip files to a package:
-    > zip(source_files_path, zip_destination_path);
+    (1) Zip files to a package, broadcast all clients to download and unzip it:
+    > updateAll(src_path_in_upload_path);
 
     Example:
-    > zip('./file/src', './file/update/result.tgz');
+    > updateAll('./dir');
 
-    (2) Broadcast all clients to download package and unzip it:
-    > updateAll(package_name_in_upload_path);
-
-    Example:
-    > updateAll('result.tgz');
-
-    (3) Send designated client to download package and unzip it:
-    > update(package_name_in_upload_path, uid_array);
+    (2) Zip files to a package, send designated client to download and unzip it:
+    > update(src_path_in_upload_path, uid_array);
 
     Example:
-    > update('result.tgz', ['ca832f67f4c8e1d8bce7f4ee2ff9bfab']);
+    > update('./dir', ['ca832f67f4c8e1d8bce7f4ee2ff9bfab']);
 
-    (4) Broadcast all clients to reboot:
+    (3) Broadcast all clients to reboot:
     > rebootAll();
 
-    (5) Send designated client to reboot:
+    (4) Send designated client to reboot:
     > reboot(uid_array);
 
     Example:
     > reboot(['ca832f67f4c8e1d8bce7f4ee2ff9bfab']);
 
-    (6) Send designated client to reset ip:
+    (5) Send designated client to reset ip:
     > reset(uid_array);
 
     Example:

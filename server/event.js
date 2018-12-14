@@ -16,32 +16,33 @@
 
             consoleLog(`Node "${uid}" send sysInfo finish`);
         },
-        clientUpdateFinish: async (uid, stdout, stderr) => {
+        clientUpdateFinish: async (uid, packName, stdout, stderr) => {
             let info = {
                 updateSuccess: true,
+                lastPackName: packName,
                 lastUpdateTime: Date.now(),
                 stdout, stderr
             };
             let result = await mongo.updateOne({ uid }, info);
             if (!result) {
-                consoleError(`Node "${uid}" update error (mongodb error)`);
+                consoleError(`Node "${uid}" update "${packName}" error (mongodb error)`);
                 return;
             }
 
-            consoleLog(`Node "${uid}" update finish`);
+            consoleLog(`Node "${uid}" update "${packName}" finish`);
         },
-        clientUpdateError: async (uid, stdout, stderr) => {
+        clientUpdateError: async (uid, packName, stdout, stderr) => {
             let info = {
                 updateSuccess: true,
                 stdout, stderr
             };
             let result = await mongo.updateOne({ uid }, info);
             if (!result) {
-                consoleError(`Node "${uid}" update error (mongodb error)`);
+                consoleError(`Node "${uid}" update "${packName}" error (mongodb error)`);
                 return;
             }
 
-            consoleError(`Node "${uid}" update error`);
+            consoleError(`Node "${uid}" update "${packName}" error`);
         }
     };
     module.exports = exportObj;

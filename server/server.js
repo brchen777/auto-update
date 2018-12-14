@@ -113,7 +113,6 @@
     await mongo.init();
 
     let REPL = repl.start('> ');
-    REPL.context.zip = require('./repl/zip');
     REPL.context.update = require('./repl/update')('one', wsServer.send.bind(wsServer));
     REPL.context.updateAll = require('./repl/update')('all', wsServer.broadcast.bind(wsServer));
     REPL.context.reboot = require('./repl/reboot')('one', wsServer.send.bind(wsServer));
