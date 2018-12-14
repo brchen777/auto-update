@@ -10,7 +10,6 @@
             res.writeHead( 404, { 'Content-Type': 'text/plain' });
             res.write('File Not Found!');
         }
-        res.end();
     };
     
     function HTML404() {

@@ -34,7 +34,6 @@
 })();
 </script>`
         }));
-        res.end();
     };
 
     function __calculateInfo(input) {

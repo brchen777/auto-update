@@ -32,24 +32,18 @@
                 error404(req, res, true);
                 return;
             }
-    
-            let readFile = fs.createReadStream(readFilePath);
-            readFile
-            .on('data', (data) => {
-                if (!res.write(data)) { 
-                    readFile.pause();
-                }
-            })
-            .on('end', () => {
-                res.end();
-            });
-    
+
             let ext = fileName.lastIndexOf('.');
             ext = (ext > 0) ? reqPath.substring(ext + 1) : '';
             let contentType = MINE_MAP[ext] || 'application/octet-stream';
             res.writeHead(200, { 'Content-Type': contentType });
-            res.on('drain', () => {
-                readFile.resume();
+
+            let readFile = fs.createReadStream(readFilePath);
+            return new Promise((resolve, reject) => {
+                readFile
+                .on('end', resolve)
+                .on('error', reject)
+                .pipe(res);
             });
         };
     };

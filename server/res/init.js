@@ -8,11 +8,11 @@
     module.exports = (req, res) => {
         let body = '';
         new Promise((resolve) => {
-            req.on('data', function (data) {
+            req
+            .on('data', function (data) {
                 body += data;
-            });
-
-            req.on('end', function () {
+            })
+            .on('end', function () {
                 resolve(JSON.parse(body));
             });
         })
@@ -28,7 +28,6 @@
             consoleLog(`Node "${uid}" get ip: "${ip}"`);
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.write(JSON.stringify(result));
-            res.end();
         });
     };
 })();
