@@ -71,7 +71,7 @@
             let dataParse = JSON.parse(data);
             if (Object(dataParse) !== dataParse) return;
 
-            let { eventName, args=[] } = dataParse;
+            let { eventName, args = [] } = dataParse;
             if (eventName === '__system-update') {
                 args = [ws, ...args];
             }

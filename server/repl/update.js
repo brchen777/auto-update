@@ -30,13 +30,13 @@
 
             Promise
             .resolve(__main())
-            .then(([msgOuts, msgErrs])=>{
+            .then(([msgOuts = [], msgErrs = []])=>{
                 msgOuts = msgOuts.filter(Boolean);
                 msgErrs = msgErrs.filter(Boolean);
                 consoleLog(...msgOuts, 'System update finish');
                 consoleError(...msgErrs);
             })
-            .catch(([msgOuts, msgErrs]) => {
+            .catch(([msgOuts = [], msgErrs = []]) => {
                 msgOuts = msgOuts.filter(Boolean);
                 msgErrs = msgErrs.filter(Boolean);
                 consoleLog(...msgOuts, 'System update error');
@@ -99,7 +99,8 @@
             function __triggerHandler([msgOut = [], msgErr = []]) {
                 let eventName = '__system-update';
                 if (type === 'one') {
-                    let [uids, ...otherArgs] = args;
+                    let [uids = [], ...otherArgs] = args;
+                    uids = Array.isArray(uids) ? uids : [uids];
                     uids.forEach((uid) => {
                         handler(uid, JSON.stringify({ eventName, args: [fileName, ...otherArgs] }));
                     });

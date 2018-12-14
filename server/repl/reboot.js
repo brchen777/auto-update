@@ -21,7 +21,8 @@
             consoleLog('System reboot');
             let eventName = '__system-reboot';
             if (type === 'one') {
-                let [uids, ...otherArgs] = args;
+                let [uids = [], ...otherArgs] = args;
+                uids = Array.isArray(uids) ? uids : [uids];
                 uids.forEach((uid) => {
                     handler(uid, JSON.stringify({ eventName, args: [...otherArgs] }));
                 });

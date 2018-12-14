@@ -93,7 +93,7 @@
         }
 
         // unzip
-        function __unzipPack([msgOut=[], msgErr=[]]) {
+        function __unzipPack([msgOut = [], msgErr = []]) {
             let unzipResolve, unzipReject;
             const unzipPromise = new Promise((resolve, reject) => {
                 unzipResolve = resolve;
@@ -108,7 +108,7 @@
         }
 
         // run shell script
-        function __runSH([msgOut=[], msgErr=[]]) {
+        function __runSH([msgOut = [], msgErr = []]) {
             let shFilePath = `./update.sh`;
             let shResolve, shReject;
             const shPromise = new Promise((resolve, reject) => {
