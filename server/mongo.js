@@ -53,6 +53,7 @@
                 status: STATUS.INIT,
                 initTime: time,
                 aliveTime: time,
+                lastPackName: '',
                 lastUpdateTime: time
             })
             .then((data) => {
