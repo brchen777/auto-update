@@ -42,7 +42,7 @@
             let result = {
                 id: node.lastNum,
                 uid: node.uid,
-                cpu: [], mem: 0, disk: {}, time: 0
+                cpu: [], mem: 0, disk: {}
             };
 
             // cpu

@@ -62,7 +62,7 @@
                 lastUpdateTimeStr = `${diff_reduced} hour${diff_reduced > 1 ? 's' : ''} ago`;
             }
             else {
-                lastUpdateTimeStr = moment.unix(serverInfo.time).format('YYYY/MM/DD HH:mm');
+                lastUpdateTimeStr = moment.unix(serverInfo.lastUpdateTime).format('YYYY/MM/DD HH:mm');
             }
 
             let item = $.tmpl(tpl, {
