@@ -45,7 +45,7 @@
                 aliveTimeStr = `${diff_reduced} hour${diff_reduced > 1 ? 's' : ''} ago`;
             }
             else {
-                aliveTimeStr = moment.unix(serverInfo.time).format('YYYY/MM/DD HH:mm');
+                aliveTimeStr = moment.unix(serverInfo.aliveTime).format('YYYY/MM/DD HH:mm');
             }
 
             let lastUpdateDiff = moment().unix() - serverInfo.lastUpdateTime;
