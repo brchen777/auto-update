@@ -101,6 +101,12 @@
 
     * Note: After unzip package, client will run "update.sh", so you should prepare "update.sh" in your source files path.
 
+4. Usage browser to open manager page
+
+    Manager url: `http://${server_host}:${server_port}/manager`
+
+    Example url: http://192.168.0.253:1234/manager
+
 #### Client Side ####
 
 1. Setting config file (It is equal to server side).
