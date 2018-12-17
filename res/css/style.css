@@ -3,30 +3,24 @@ body { font-size:16px; width:100%; background:#FFF; }
 
 
 main { z-index:2; position:relative; width:100%; }
-    main > nav {
-        position:fixed; left:0; top:0;
-        width:80px; height:100vh; overflow:auto;
-        background:linear-gradient(75deg, #216A9B, #2384C4);
-        box-shadow:5px 0 10px 0 #AAA;
-    }
-    main > .viewport { margin-left:80px; width:calc(100% - 80px); }
-        .viewport .server-item-container { width:calc(100% - 40px * 2); margin:60px 40px; }
-            .viewport .server-item-container ul.server-item-row {
-                display:flex; justify-content:space-between; flex-wrap:wrap;
-                width:100%; margin:0 0 25px; padding:0;
+    main > .viewport { width:100%; }
+        .viewport .server-item-container { height:2150px; }
+            .viewport .server-item-container .server-item-list {
+                display:flex; flex-direction:column; flex-wrap:wrap;
+                width:100%; height:100%; margin:0 0 25px; padding:0;
             }
-            .viewport .server-item-container ul.server-item-row:last-child { margin-bottom:0; }
-                .viewport .server-item-container ul.server-item-row > li.server-item {
-                    display:inline-block; padding:15px;
+            .viewport .server-item-container .server-item-list:last-child { margin-bottom:0; }
+                .viewport .server-item-container .server-item-list > .server-item {
+                    display:inline-block; padding:15px; margin:10px;
                     width:calc(300px - 20px - 15px * 2); overflow:hidden;
                     border-radius:8px; color:#FFF; font-family:"Lucida Console", Monaco, monospace;
                     background:linear-gradient(75deg, #229985, #23C2A7); box-shadow:1px 5px 6px 0 #AAA;
                 }
-                .viewport .server-item-container ul.server-item-row > li.server-item.inactive { visibility:hidden; pointer-events:none; }
-                .viewport .server-item-container ul.server-item-row > li.server-item.warn {
+                .viewport .server-item-container .server-item-list > .server-item.inactive { visibility:hidden; pointer-events:none; }
+                .viewport .server-item-container .server-item-list > .server-item.warn {
                     background:linear-gradient(75deg, #999923, #C2C225); box-shadow:1px 5px 6px 0 #AAA;
                 }
-                .viewport .server-item-container ul.server-item-row > li.server-item.danger {
+                .viewport .server-item-container .server-item-list > .server-item.danger {
                     background:linear-gradient(75deg, #992323, #C22727); box-shadow:1px 5px 6px 0 #AAA;
                 }
                     .server-item .server-id { font-size:1.2em; font-weight:bolder; margin-bottom:10px; }

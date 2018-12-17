@@ -4,13 +4,12 @@
     module.exports = () => {
         return '' +
 `<main class='clearfix'>
-    <nav id='main-nav'></nav>
     <div id='viewport' class='viewport clearfix'>
         <div id='info-container' class='server-item-container'></div>
     </div>
 </main>
 <script data-tpl="server-item" type='text/html'>
-    <li class='server-item {{if !active}}inactive{{/if}}' data-rel='\${id}'>
+    <div class='server-item {{if !active}}inactive{{/if}}' data-rel='\${id}'>
         <div class='server-id' title='id'>\${id}</div>
         <div class='machine-id' title='machine-id'>\${uid}</div>
         <div class='info-bar' data-inspect='cpu' title='cpu'>
@@ -31,7 +30,7 @@
         <div class='alive-time' title='alive time'>alive: \${aliveTime}</div>
         <div class='last-pack-name' title='last pack name'>last pack: \${lastPackName}</div>
         <div class='last-update-time' title='last update time'>last update: \${lastUpdateTime}</div>
-    </li>
+    </div>
 </script>`;
     };
 })();

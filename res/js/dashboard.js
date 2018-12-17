@@ -13,8 +13,7 @@
     let kernel = pump.instantiate();
     kernel.on('system-ready', ()=>{
         let data = window.INPUT_DATA || [];
-        let rowContainer = $('<ul>').addClass('server-item-row');
-        let counter = 0;
+        let listContainer = $('<div>').addClass('server-item-list');
         
         data.forEach((serverInfo)=>{
             let ratios = { cpu: 0, mem: 0, disk: 0 };
@@ -77,10 +76,10 @@
                 lastUpdateTime: lastUpdateTimeStr
             });
 
-            if (aliveDiff < aliveHealthyBound) {
+            if (aliveHealthyBound > aliveDiff) {
                 item.removeClass('warn').removeClass('danger');
             }
-            else if (aliveDiff >= aliveHealthyBound && aliveDiff <= aliveWarningBound) {
+            else if (aliveWarningBound >= aliveDiff && aliveDiff >= aliveHealthyBound) {
                 item.removeClass('danger').addClass('warn');
             }
             else {
@@ -103,32 +102,9 @@
                 }
             });
 
-            if (counter++ >= 4) {
-                container.append(rowContainer);
-                rowContainer = $('<ul>').addClass('server-item-row');
-                counter -= 4;
-            }
-
-            rowContainer.append(item);
+            listContainer.append(item);
         });
-        
-        if (counter > 0) {
-            let dummy = 4 - counter;
-            while(dummy-- > 0) {
-                $.tmpl(tpl, {
-                    active: false,
-                    id: '',
-                    uid: '',
-                    cpuRate: 0,
-                    memRate: 0,
-                    diskRate: 0,
-                    aliveTime: '',
-                    lastPackName: '',
-                    lastUpdateTime: ''
-                }).appendTo(rowContainer);
-            }
 
-            container.append(rowContainer);
-        }
+        container.append(listContainer);
     });
 })();
