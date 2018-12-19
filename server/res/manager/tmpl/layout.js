@@ -17,6 +17,6 @@
             `<link type='text/css' rel='stylesheet' href='//res.purimize.com/lib/css/oops.min.css' />`,
             `<link type='text/css' rel='stylesheet' href='/res/css/style.css' />`
         ].join('');
-        return `<!DOCTYPE html><html lang="en"><head>${header}</head><body><div class='bg'></div>${content}${init}</body></html>`;
+        return `<!DOCTYPE html><html lang="en"><head>${header}</head><body>${content}${init}</body></html>`;
     };
 })();

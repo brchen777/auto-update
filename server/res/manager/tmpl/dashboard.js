@@ -5,7 +5,7 @@
         return '' +
 `<main class='clearfix'>
     <div id='viewport' class='viewport clearfix'>
-        <div id='info-container' class='server-item-container'></div>
+        <div id='info-container' class='server-item-container clearfix'></div>
     </div>
 </main>
 <script data-tpl="server-item" type='text/html'>

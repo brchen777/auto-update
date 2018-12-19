@@ -9,11 +9,13 @@
     const progressBusyBound = 40;
     const container = $('#info-container');
     const tpl = $('script[data-tpl="server-item"]').html();
+    const rowMax = 10;
 
     let kernel = pump.instantiate();
     kernel.on('system-ready', ()=>{
         let data = window.INPUT_DATA || [];
-        let listContainer = $('<div>').addClass('server-item-list');
+        let colContainer = $('<div>').addClass('server-item-col clearfix');
+        let counter = 0;
         
         data.forEach((serverInfo)=>{
             let ratios = { cpu: 0, mem: 0, disk: 0 };
@@ -102,9 +104,30 @@
                 }
             });
 
-            listContainer.append(item);
+            if (counter++ >= rowMax) {
+                container.append(colContainer);
+                colContainer = $('<div>').addClass('server-item-col clearfix');
+                counter -= rowMax;
+            }
+            colContainer.append(item);
         });
 
-        container.append(listContainer);
+        if (counter > 0) {
+            let dummy = rowMax - counter;
+            while(dummy-- > 0) {
+                $.tmpl(tpl, {
+                    active: false,
+                    id: '',
+                    uid: '',
+                    cpuRate: 0,
+                    memRate: 0,
+                    diskRate: 0,
+                    aliveTime: '',
+                    lastPackName: '',
+                    lastUpdateTime: ''
+                }).appendTo(colContainer);
+            }
+            container.append(colContainer);
+        }
     });
 })();
