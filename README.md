@@ -23,7 +23,7 @@
                 "maxLastNum": @int              // maximum last number for selecting ip range in mongodb
             },
             "socket": {
-                "connection": [@int, @string]   // socket port and host
+                "connection": [ ... ]           // param for socket listen
             }
         },
         "client": {
@@ -78,6 +78,8 @@
     Example:
     > updateAll('./dir');
 
+    * Note: After unzip package, client will run "update.sh", so you should prepare "update.sh" in your source files path.
+
     (2) Zip files to a package, send designated client to download and unzip it:
     > update(src_path_in_upload_path, uid_array);
 
@@ -99,7 +101,8 @@
     Example:
     > reset(['ca832f67f4c8e1d8bce7f4ee2ff9bfab']);
 
-    * Note: After unzip package, client will run "update.sh", so you should prepare "update.sh" in your source files path.
+    (6) Show connect device list:
+    > deviceList();
 
 4. Usage browser to open manager page
 

@@ -82,7 +82,7 @@
     });
 
     wsServer
-    .on('connection', (ws) => {
+    .on('connection', (ws, req) => {
         ws
         .on('message', (data) => {
             let dataParse = JSON.parse(data);
@@ -92,6 +92,7 @@
             if (eventName === '__client-ws-open') {
                 let [uid] = args;
                 ws.uid = uid;
+                ws.ip = req.connection.remoteAddress;
                 wsServer.machineMap[uid] = ws;
             }
             else {
@@ -117,7 +118,8 @@
         updateAll: require('./repl/update')('all', wsServer.broadcast.bind(wsServer)),
         reboot: require('./repl/reboot')('one', wsServer.send.bind(wsServer)),
         rebootAll: require('./repl/reboot')('all', wsServer.broadcast.bind(wsServer)),
-        reset: require('./repl/reset')('one', wsServer.send.bind(wsServer))
+        reset: require('./repl/reset')('one', wsServer.send.bind(wsServer)),
+        deviceList: require('./repl/list')(wsServer.machineMap)
     };
 
     // remote socket api
