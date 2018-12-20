@@ -12,27 +12,27 @@
     ``` javascript
     {
         "server": {
-            "host": @string,                // server host
-            "port": @int,                   // server port
-            "filePath": @string,            // package upload path
+            "host": @string,                    // server host
+            "port": @int,                       // server port
+            "filePath": @string,                // package upload path
             "mongodb": {
-                "host": @string,            // db host
-                "port": @int,               // db port
-                "dbName": @string,          // db name in mongodb
-                "colName": @string,         // collection name in mongodb
-                "maxLastNum": @int          // maximum last number for selecting ip range in mongodb
+                "host": @string,                // db host
+                "port": @int,                   // db port
+                "dbName": @string,              // db name in mongodb
+                "colName": @string,             // collection name in mongodb
+                "maxLastNum": @int              // maximum last number for selecting ip range in mongodb
             },
             "socket": {
-                "socketConn": [@int, @string]   // socket port and host
+                "connection": [@int, @string]   // socket port and host
             }
         },
         "client": {
-            "host": @string,                // client host
-            "port": @int,                   // client port
-            "filePath": @string,            // package download path
-            "preCommand": [ @string, ... ], // pre-command for each command line
-            "delayTimeout": @int,           // init delay timeout at the first time (millisecond)
-            "sendTimeout": @int             // timeout for each sending system info event (millisecond)
+            "host": @string,                    // client host
+            "port": @int,                       // client port
+            "filePath": @string,                // package download path
+            "preCommand": [ @string, ... ],     // pre-command for each command line
+            "delayTimeout": @int,               // init delay timeout at the first time (millisecond)
+            "sendTimeout": @int                 // timeout for each sending system info event (millisecond)
         }
     }
     ```
@@ -53,7 +53,7 @@
                 "maxLastNum": 100
             },
             "socket": {
-                "socketConn": [1235, "0.0.0.0"]
+                "connection": [1235, "0.0.0.0"]
             }
         },
         "client": {
