@@ -13,12 +13,11 @@
          * @example deviceList();
         */
         return () => {
-            consoleLog('Machine list');
             let result = [];
             Object.entries(machineMap).forEach(([key, val]) => {
                 result.push([val.ip, val.uid]);
             });
-            consoleLog(result);
+            return result;
         };
     };
 })();
