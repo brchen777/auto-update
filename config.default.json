@@ -11,7 +11,7 @@
             "maxLastNum": 100
         },
         "socket": {
-            "port": 1235
+            "connection": [4322, "0.0.0.0"]
         }
     },
     "client": {

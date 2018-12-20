@@ -23,7 +23,7 @@
                 "maxLastNum": @int          // maximum last number for selecting ip range in mongodb
             },
             "socket": {
-                "port": @int                // socket port for remote repl
+                "socketConn": [@int, @string]   // socket port and host
             }
         },
         "client": {
@@ -53,7 +53,7 @@
                 "maxLastNum": 100
             },
             "socket": {
-                "port": 1235
+                "socketConn": [1235, "0.0.0.0"]
             }
         },
         "client": {

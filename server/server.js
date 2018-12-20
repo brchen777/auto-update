@@ -14,7 +14,7 @@
     const { consoleError } = require('../lib/misc');
 
     const { host: serverHost, port: serverPort, filePath: destPath } = config.conf.server;
-    const { port: socketPort } = config.conf.server.socket;
+    const { connection: socketConn } = config.conf.server.socket;
     const HANDLERS = {
         get: {
             '/file': require('./res/file')(destPath),
@@ -112,12 +112,13 @@
 
     await mongo.init();
 
-    let REPL = repl.start('> ');
-    REPL.context.update = require('./repl/update')('one', wsServer.send.bind(wsServer));
-    REPL.context.updateAll = require('./repl/update')('all', wsServer.broadcast.bind(wsServer));
-    REPL.context.reboot = require('./repl/reboot')('one', wsServer.send.bind(wsServer));
-    REPL.context.rebootAll = require('./repl/reboot')('all', wsServer.broadcast.bind(wsServer));
-    REPL.context.reset = require('./repl/reset')('one', wsServer.send.bind(wsServer));
+    let ReplContext = {
+        update: require('./repl/update')('one', wsServer.send.bind(wsServer)),
+        updateAll: require('./repl/update')('all', wsServer.broadcast.bind(wsServer)),
+        reboot: require('./repl/reboot')('one', wsServer.send.bind(wsServer)),
+        rebootAll: require('./repl/reboot')('all', wsServer.broadcast.bind(wsServer)),
+        reset: require('./repl/reset')('one', wsServer.send.bind(wsServer))
+    };
 
     // remote socket api
     net.createServer((socket) => {
@@ -130,6 +131,6 @@
             socket.end();
         });
     
-        Object.assign(replInst.context, REPL.context);
-    }).listen(socketPort, serverHost);
+        Object.assign(replInst.context, ReplContext);
+    }).listen(...socketConn);
 })();
