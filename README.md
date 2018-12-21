@@ -70,7 +70,13 @@
 2. Run server
     > npm run server
 
-3. Use Repl mode, you can use:
+3. Use Netcat to connect socket:
+    > nc socket_connection_host socket_connection_port
+
+    Example:
+    > nc 127.0.0.1 1235
+
+4. In repl mode, you can use:
 
     (1) Zip files to a package, broadcast all clients to download and unzip it:
     > updateAll(src_path_in_upload_path);
@@ -104,7 +110,7 @@
     (6) Show connect device list:
     > deviceList();
 
-4. Usage browser to open manager page
+5. Usage browser to open manager page
 
     Manager url: `http://${server_host}:${server_port}/manager`
 
