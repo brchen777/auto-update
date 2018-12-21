@@ -20,7 +20,8 @@
                 "port": @int,                   // db port
                 "dbName": @string,              // db name in mongodb
                 "colName": @string,             // collection name in mongodb
-                "maxLastNum": @int              // maximum last number for selecting ip range in mongodb
+                "initLastNum": @int,            // maximum last number for selecting ip range in mongodb
+                "managerLastNum": @int          // maximum last number for showing ip range in manager
             },
             "socket": {
                 "connection": [ ... ]           // param for socket listen
@@ -50,7 +51,8 @@
                 "port": 27017,
                 "dbName": "auto-update",
                 "colName": "node",
-                "maxLastNum": 100
+                "initLastNum": 100,
+                "managerLastNum": 150
             },
             "socket": {
                 "connection": [1235, "0.0.0.0"]

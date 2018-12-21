@@ -6,7 +6,7 @@
     const { STATUS } = require('../lib/constants');
 
     const { host: clientHost } = config.conf.client;
-    const { host: dbHost, port: dbPort, dbName, colName, maxLastNum = 100 } = config.conf.server.mongodb;
+    const { host: dbHost, port: dbPort, dbName, colName, initLastNum: maxLastNum = 100 } = config.conf.server.mongodb;
     const dbUrl = `mongodb://${dbHost}:${dbPort}/`;
     let collection = null;
 

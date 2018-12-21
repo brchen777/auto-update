@@ -7,7 +7,7 @@
     const config = require('json-cfg').trunk;
     const error404 =  require('../error/404');
 
-    const { maxLastNum = 100 } = config.conf.server.mongodb;
+    const { managerLastNum: maxLastNum = 150 } = config.conf.server.mongodb;
 
     module.exports = async (req, res) => {
         let result = await mongo.find({ lastNum: { $lt: maxLastNum, $gt: 1 }}, { lastNum: 1 });

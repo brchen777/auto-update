@@ -8,7 +8,8 @@
             "port": 27017,
             "dbName": "auto-update",
             "colName": "node",
-            "maxLastNum": 100
+            "initLastNum": 100,
+            "managerLastNum": 150
         },
         "socket": {
             "connection": [4322, "0.0.0.0"]
