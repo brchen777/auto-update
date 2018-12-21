@@ -33,6 +33,7 @@
         }
     };
     
+    let serverRetryCnt = 0;
     const httpServer = http.createServer((req, res) => {
         let method = req.method.toLowerCase();
         let handlerGroup = HANDLERS[method] || {};
@@ -58,7 +59,21 @@
             consoleError(err);
             HANDLERS.error404(req, res, true);
         });
+    })
+    .on('error', function (e) {
+        serverRetryCnt++;
+        if (serverRetryCnt <= 10) {
+            setTimeout(() => {
+                httpServer.close();
+                httpServer.listen(serverPort, serverHost);
+            }, 1000);
+        }
+        else {
+            consoleError(e);
+            process.exit(1);
+        }
     });
+
     httpServer.listen(serverPort, serverHost);
 
     const wsServer = new WebSocket.Server({ server: httpServer, handshakeTimeout: 5000 });
