@@ -1,8 +1,6 @@
 (() => {
     'use strict';
 
-    const { consoleLog } = require('../../lib/misc');
-
     /** 
      * @param {Object} machineMap
      * @returns {function}
@@ -14,7 +12,7 @@
         */
         return () => {
             let list = [];
-            Object.entries(machineMap).forEach(([key, val]) => {
+            Object.values(machineMap).forEach((val) => {
                 list.push([val.ip, val.uid]);
             });
 
