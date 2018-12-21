@@ -7,7 +7,7 @@
 
     module.exports = (req, res) => {
         let body = '';
-        new Promise((resolve) => {
+        return new Promise((resolve) => {
             req
             .on('data', function (data) {
                 body += data;
