@@ -10,6 +10,7 @@
     const { workingRoot } = config.conf.runtime;
     const MINE_MAP = {
         'js':	'application/javascript',
+        'mjs':	'application/javascript',
         'png':	'image/png',
         'jpg':	'image/jpeg',
         'jpeg':	'image/jpeg',
@@ -33,8 +34,8 @@
                 return;
             }
 
-            let ext = fileName.lastIndexOf('.');
-            ext = (ext > 0) ? fileName.substring(ext + 1) : '';
+            let extIdx = fileName.lastIndexOf('.');
+            let ext = (extIdx > 0) ? fileName.substring(extIdx + 1) : '';
             let contentType = MINE_MAP[ext] || 'application/octet-stream';
             res.writeHead(200, { 'Content-Type': contentType });
 
