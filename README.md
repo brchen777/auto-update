@@ -30,6 +30,7 @@
         "client": {
             "host": @string,                    // client host
             "port": @int,                       // client port
+            "wsProtocol": @string,              // sub protocol for websocket
             "filePath": @string,                // package download path
             "preCommand": [ @string, ... ],     // pre-command for each command line
             "delayTimeout": @int,               // init delay timeout at the first time (millisecond)
@@ -61,6 +62,7 @@
         "client": {
             "host": "192.168.0.1",
             "port": 1234,
+            "wsProtocol": "protocol",
             "filePath": "./file/download",
             "preCommand": ["sudo"],         // use sudo in linux system
             "delayTimeout": 5000,

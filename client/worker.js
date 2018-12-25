@@ -18,7 +18,7 @@
     const hash = crypto.createHash('md5');
     const { bashPath, workingRoot } = config.conf.runtime;
     const { host: serverHost, port: serverPort } = config.conf.server;
-    const { detectTimeout, delayTimeout, sendTimeout } = config.conf.client;
+    const { detectTimeout, delayTimeout, sendTimeout, wsProtocol } = config.conf.client;
     const initUrl = `http://${serverHost}:${serverPort}/init`;
     const initFlagPath = `${workingRoot}/__init`;
     const wsUrl = `ws://${serverHost}:${serverPort}`;
@@ -62,9 +62,9 @@
 
         let runReject;
         let runPromise = new Promise((resolve, reject) => { runReject = reject; });
-        const ws = new WebSocket(wsUrl);
+        const ws = new WebSocket(wsUrl, wsProtocol);
         ws
-        .on('open', async () => {
+        .on('open', async (...args) => {
             ws.send(JSON.stringify({ eventName: '__client-ws-open', args: [uid] }));
         })
         .on('message', (data) => {
@@ -81,7 +81,8 @@
 
             handler(...args);
         })
-        .on('close', () => {
+        .on('close', (...args) => {
+            console.log(args);
             runReject('Connection close.');
         })
         .on('error', (e) => {
