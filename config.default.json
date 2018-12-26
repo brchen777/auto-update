@@ -20,7 +20,6 @@
         "port": 1234,
         "wsProtocol": "protocol",
         "filePath": "./file/download",
-        "preCommand": ["sudo"],
         "detectTimeout": 2000,
         "delayTimeout": 5000,
         "sendTimeout": 30000
