@@ -1,6 +1,8 @@
-.vscode
-__init
-node_modules
 file
-package-lock.json
+.vscode
+node_modules
+
+__init
+reboot.log
 config.json
+package-lock.json
