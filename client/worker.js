@@ -64,7 +64,7 @@
         let runPromise = new Promise((resolve, reject) => { runReject = reject; });
         const ws = new WebSocket(wsUrl, wsProtocol);
         ws
-        .on('open', async (...args) => {
+        .on('open', async () => {
             ws.send(JSON.stringify({ eventName: '__client-ws-open', args: [uid] }));
         })
         .on('message', (data) => {
@@ -82,7 +82,7 @@
             handler(...args);
         })
         .on('close', (...args) => {
-            console.log(args);
+            consoleError(args);
             runReject('Connection close.');
         })
         .on('error', (e) => {
