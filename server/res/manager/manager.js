@@ -45,8 +45,10 @@
                 cpu: [], mem: 0, disk: {}
             };
 
+            let { cpu = [], disk = [], mem, aliveTime, lastPackName, lastUpdateTime } = node;
+
             // cpu
-            node.cpu.forEach((cpu) => {
+            cpu.forEach((cpu) => {
                 let total = 0;
                 for (let type in cpu.times) {
                     total += cpu.times[type];
@@ -55,22 +57,22 @@
             });
 
             // mem
-            result.mem = roundTo((node.mem.total - node.mem.available) / node.mem.total * 100, 2);
+            result.mem = (mem) ? roundTo((mem.total - mem.available) / mem.total * 100, 2) : 0;
 
             // disk
-            node.disk.forEach((disk) => {
+            disk.forEach((disk) => {
                 let id = disk.fs;
                 result.disk[id] = roundTo(disk.use, 2);
             });
 
             // alive time
-            result.aliveTime = (node.aliveTime) ? roundTo(node.aliveTime / 1000, 0) : 0;
+            result.aliveTime = (aliveTime) ? roundTo(aliveTime / 1000, 0) : 0;
 
             // last pack name
-            result.lastPackName = node.lastPackName || '';
+            result.lastPackName = lastPackName || '';
 
             // last update time
-            result.lastUpdateTime = (node.lastUpdateTime) ? roundTo(node.lastUpdateTime / 1000, 0) : 0;
+            result.lastUpdateTime = (lastUpdateTime) ? roundTo(lastUpdateTime / 1000, 0) : 0;
 
             output.push(result);
         });
