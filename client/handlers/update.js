@@ -11,7 +11,7 @@
 
     const { bashPath, workingRoot } = config.conf.runtime;
     const { host: serverHost, port: serverPort } = config.conf.server;
-    const { filePath: destPath } = config.conf.client;
+    const { filePath: destPath, updateEnvPath } = config.conf.client;
     const downloadUrl = `http://${serverHost}:${serverPort}/file`;
     const contentDirName = '__content';
 
@@ -115,7 +115,9 @@
                 shResolve = resolve;
                 shReject = reject;
             });
-            shell.exec(COMMAND.RUN_SH(shFilePath), { shell: bashPath, cwd: contentPath }, (code, stdout, stderr) => {
+            let envVarFilePath = path.resolve(workingRoot, updateEnvPath);
+            let envVarObj = fs.readJsonSync(envVarFilePath, { throws: false });
+            shell.exec(COMMAND.RUN_SH(shFilePath), { shell: bashPath, cwd: contentPath, env: envVarObj }, (code, stdout, stderr) => {
                 (code !== 0)
                     ? shReject([[...msgOut, stdout, 'Run shell script error'], [...msgErr, stderr]])
                     : shResolve([[...msgOut, stdout, 'Run shell script finish'], [...msgErr, stderr]]);

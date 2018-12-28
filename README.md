@@ -32,6 +32,7 @@
             "port": @int,                       // client port
             "wsProtocol": @string,              // sub protocol for websocket
             "filePath": @string,                // package download path
+            "updateEnvPath": @string,           // config file path for setting environment variable before running update.sh
             "delayTimeout": @int,               // init delay timeout at the first time (millisecond)
             "sendTimeout": @int                 // timeout for each sending system info event (millisecond)
         }
@@ -63,6 +64,7 @@
             "port": 1234,
             "wsProtocol": "protocol",
             "filePath": "./file/download",
+            "updateEnvPath": "../.env/config.json",
             "delayTimeout": 5000,
             "sendTimeout": 30000
         }

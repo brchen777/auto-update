@@ -20,6 +20,7 @@
         "port": 1234,
         "wsProtocol": "protocol",
         "filePath": "./file/download",
+        "updateEnvPath": "../.env/config.json",
         "detectTimeout": 2000,
         "delayTimeout": 5000,
         "sendTimeout": 30000
