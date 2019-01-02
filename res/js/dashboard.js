@@ -28,9 +28,9 @@
                 ratios.disk += serverInfo.disk[diskId];
             }
 
-            ratios.cpu = Math.round(ratios.cpu / serverInfo.cpu.length);
+            ratios.cpu = (serverInfo.cpu.length) ? Math.round(ratios.cpu / serverInfo.cpu.length) : 0;
             ratios.mem = Math.round(serverInfo.mem);
-            ratios.disk = Math.round(ratios.disk / diskIds.length);
+            ratios.disk = (diskIds.length) ? Math.round(ratios.disk / diskIds.length) : 0;
 
             let aliveDiff = moment().unix() - serverInfo.aliveTime;
             let aliveTimeStr = '';
