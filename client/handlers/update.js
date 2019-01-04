@@ -40,20 +40,12 @@
         });
 
         async function __main() {
-            try {
-                let res = await __getRequest();
-
-                let results = [];
-                results = await __downloadPack(res);
-                results = await __unzipPack(results);
-                results = await __runSH(results);
-                return results
-            }
-            catch (e) {
-                // delete package directory
-                fs.removeSync(packPath);
-                return e;
-            }
+            let res = await __getRequest();
+            let results = [];
+            results = await __downloadPack(res);
+            results = await __unzipPack(results);
+            results = await __runSH(results);
+            return results
         }
 
         // get request

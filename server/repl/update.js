@@ -23,7 +23,7 @@
          * @example updateAll('./srcDir');
          * @example update('./srcDir', ['ca832f67f4c8e1d8bce7f4ee2ff9bfab']);
          */
-        return (srcPath, ...args) => {
+        return (srcPath = '', ...args) => {
             srcPath = path.resolve(workingRoot, updatePath, srcPath);
             const fileName = `__pack_${Date.now()}.tgz`;
             const destPath = `${updatePath}/${fileName}`;
@@ -44,18 +44,11 @@
             });
             
             async function __main() {
-                try {
-                    let results = [];
-                    results = await __init();
-                    results = await __zipPack(results);
-                    results = await __triggerHandler(results);
-                    return results
-                }
-                catch (e) {
-                    // delete zip file
-                    fs.removeSync(destPath);
-                    return e;
-                }
+                let results = [];
+                results = await __init();
+                results = await __zipPack(results);
+                results = await __triggerHandler(results);
+                return results
             }
 
             // check file path and handler
@@ -65,18 +58,15 @@
                     initResolve = resolve;
                     initReject = reject;
                 });
-
-                if (!fs.existsSync(srcPath)) {
+                if (!fs.existsSync(srcPath) || !fs.existsSync(`${srcPath}/update.sh`)) {
                     initReject([['File path error'], []]);
-                    return;
                 }
-                
-                if (typeof handler !== 'function') {
+                else if (typeof handler !== 'function') {
                     initReject([['Handler error'], []]);
-                    return;
                 }
-
-                initResolve([], ['Init finish']);
+                else {
+                    initResolve([], ['Init finish']);
+                }
                 return initPromise;
             }
 
