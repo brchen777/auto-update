@@ -8,7 +8,7 @@
     const config = require('json-cfg').trunk;
 
     const { workingRoot } = config.conf.runtime;
-    const MINE_MAP = {
+    const MIME_MAP = {
         'js':	'application/javascript',
         'mjs':	'application/javascript',
         'png':	'image/png',
@@ -36,7 +36,7 @@
 
             let extIdx = fileName.lastIndexOf('.');
             let ext = (extIdx > 0) ? fileName.substring(extIdx + 1) : '';
-            let contentType = MINE_MAP[ext] || 'application/octet-stream';
+            let contentType = MIME_MAP[ext] || 'application/octet-stream';
             res.writeHead(200, { 'Content-Type': contentType });
 
             let readFile = fs.createReadStream(readFilePath);
