@@ -13,7 +13,6 @@ main { z-index:2; position:relative; width:100%; }
                     border-radius:8px; color:#FFF; font-family:"Lucida Console", Monaco, monospace;
                     background:linear-gradient(75deg, #229985, #23C2A7); box-shadow:1px 5px 6px 0 #AAA;
                 }
-                .viewport .server-item-container .server-item-col > .server-item.inactive { visibility:hidden; pointer-events:none; }
                 .viewport .server-item-container .server-item-col > .server-item.warn {
                     background:linear-gradient(75deg, #999923, #C2C225); box-shadow:1px 5px 6px 0 #AAA;
                 }
@@ -26,14 +25,13 @@ main { z-index:2; position:relative; width:100%; }
                         display:flex; flex-direction:row; flex-wrap:nowrap;
                         font-size:0.9em; align-items:center;
                     }
-                        .server-item .info-bar .logo { text-align:right; margin:0 1ch 0 2ch }
-                        .server-item .info-bar .progress { flex-grow:1; position:relative; height:0.5em; background:#FFF; }
-                            .info-bar .progress .bar { position:absolute; left:0; top:0; height:100%; width:70%; }
-                                .info-bar .progress .bar.warning { background:#F00; }
-                                .info-bar .progress .bar.busy { background:#FFC800; }
-                                .info-bar .progress .bar.normal { background:#088608; }
-
-                        .server-item .info-bar .percentage { width:4ch; text-align:right; margin:0 2ch 0 1ch; }
+                    .server-item .logo { text-align:right; margin:0 1ch 0 2ch }
+                    .server-item .progress { flex-grow:1; position:relative; height:0.5em; background:#FFF; }
+                        .server-item .progress .bar { position:absolute; left:0; top:0; height:100%; width:70%; }
+                        .server-item .progress .bar.warning { background:#F00; }
+                        .server-item .progress .bar.busy { background:#FFC800; }
+                        .server-item .progress .bar.normal { background:#088608; }
+                    .server-item .percentage { width:4ch; text-align:right; margin:0 2ch 0 1ch; }
                     .server-item .alive-time { font-size:0.7em; margin-top:10px; text-align:right; }
                     .server-item .last-pack-name { font-size:0.7em; margin-top:10px; text-align:right; }
                     .server-item .last-update-time { font-size:0.7em; margin-top:10px; text-align:right; }

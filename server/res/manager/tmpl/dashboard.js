@@ -9,7 +9,7 @@
     </div>
 </main>
 <script data-tpl="server-item" type='text/html'>
-    <div class='server-item {{if !active}}inactive{{/if}}' data-rel='\${id}'>
+    <div class='server-item' data-rel='\${id}'>
         <div class='server-id' title='id'>\${id}</div>
         <div class='machine-id' title='machine-id'>\${uid}</div>
         <div class='info-bar' data-inspect='cpu' title='cpu'>

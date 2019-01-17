@@ -67,7 +67,6 @@
             }
 
             let item = $.tmpl(tpl, {
-                active: true,
                 id: serverInfo.id,
                 uid: serverInfo.uid,
                 cpuRate: `${ratios.cpu}%`,
@@ -113,20 +112,6 @@
         });
 
         if (counter > 0) {
-            let dummy = rowMax - counter;
-            while(dummy-- > 0) {
-                $.tmpl(tpl, {
-                    active: false,
-                    id: '',
-                    uid: '',
-                    cpuRate: 0,
-                    memRate: 0,
-                    diskRate: 0,
-                    aliveTime: '',
-                    lastPackName: '',
-                    lastUpdateTime: ''
-                }).appendTo(colContainer);
-            }
             container.append(colContainer);
         }
     });
