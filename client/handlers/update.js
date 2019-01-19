@@ -11,7 +11,7 @@
 
     const { bashPath, workingRoot } = config.conf.runtime;
     const { host: serverHost, port: serverPort } = config.conf.server;
-    const { filePath: destPath, updateEnvPath } = config.conf.client;
+    const { filePath: destPath = '.', updateEnvPath = '' } = config.conf.client;
     const downloadUrl = `http://${serverHost}:${serverPort}/file`;
     const contentDirName = '__content';
 
