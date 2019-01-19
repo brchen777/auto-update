@@ -81,7 +81,7 @@
             .findOneAndUpdate(
                 filter,
                 { $set: info },
-                { returnNewDocument: true }
+                { returnOriginal: false }
             )
             .then((data) => {
                 return data.value;
