@@ -33,7 +33,7 @@
         },
         clientUpdateError: async (uid, packName, stdout, stderr) => {
             let info = {
-                updateSuccess: true,
+                updateSuccess: false,
                 stdout, stderr
             };
             let result = await mongo.updateOne({ uid }, info);
