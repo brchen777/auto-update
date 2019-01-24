@@ -18,6 +18,7 @@
         "json-cfg": "^0.1.6",
         "mongodb": "^2.2.36",
         "node-machine-id": "^1.1.10",
+        "os-utils": "0.0.14",
         "pitayajs": "^1.2.13",
         "repl.history": "^0.1.4",
         "round-to": "^3.0.0",

@@ -19,16 +19,12 @@
         
         data.forEach((serverInfo)=>{
             let ratios = { cpu: 0, mem: 0, disk: 0 };
-            for (let val of serverInfo.cpu) {
-                ratios.cpu += val;
-            }
-
             let diskIds = Object.keys(serverInfo.disk);
             for (let diskId of diskIds) {
                 ratios.disk += serverInfo.disk[diskId];
             }
 
-            ratios.cpu = (serverInfo.cpu.length) ? Math.round(ratios.cpu / serverInfo.cpu.length) : 0;
+            ratios.cpu = Math.round(serverInfo.cpu);
             ratios.mem = Math.round(serverInfo.mem);
             ratios.disk = (diskIds.length) ? Math.round(ratios.disk / diskIds.length) : 0;
 

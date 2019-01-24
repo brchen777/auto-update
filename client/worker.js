@@ -2,8 +2,8 @@
     'use strict';
 
     require('../prepenv');
-    const os = require('os');
     const net = require('net');
+    const os = require('os-utils');
     const fs = require('fs-extra');
     const WebSocket = require('ws');
     const shell = require('shelljs');
@@ -158,7 +158,11 @@
 
     async function getSysInfo() {
         // get cpu info
-        const p1 = Promise.resolve(os.cpus());
+        const p1 = new Promise((resolve) => {
+            os.cpuUsage((v) => {
+                resolve(v);
+            });
+        });
 
         // get memory info
         const p2 = si.mem().catch((err) => {

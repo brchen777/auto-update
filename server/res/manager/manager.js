@@ -42,19 +42,13 @@
             let result = {
                 id: node.lastNum,
                 uid: node.uid,
-                cpu: [], mem: 0, disk: {}
+                cpu: 0, mem: 0, disk: {}
             };
 
-            let { cpu = [], disk = [], mem, aliveTime, lastPackName, lastUpdateTime } = node;
+            let { cpu, mem, disk = [], aliveTime, lastPackName, lastUpdateTime } = node;
 
             // cpu
-            cpu.forEach((cpu) => {
-                let total = 0;
-                for (let type in cpu.times) {
-                    total += cpu.times[type];
-                }
-                result.cpu.push(roundTo((total - cpu.times.idle) / total * 100, 2));
-            });
+            result.cpu = (cpu) ? roundTo(cpu * 100, 2) : 0;
 
             // mem
             result.mem = (mem) ? roundTo((mem.total - mem.available) / mem.total * 100, 2) : 0;
