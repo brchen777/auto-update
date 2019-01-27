@@ -29,34 +29,34 @@
             ratios.disk = (diskIds.length) ? Math.round(ratios.disk / diskIds.length) : 0;
 
             let aliveDiff = moment().unix() - serverInfo.aliveTime;
-            let aliveTimeStr = '';
+            let aliveTimeStr = '-';
             if (aliveDiff < UNITS.MINUTE) {
-                aliveTimeStr = `${aliveDiff} second${aliveDiff > 1 ? 's' : ''} ago`;
+                aliveTimeStr = `${aliveDiff} second${(aliveDiff > 1) ? 's' : ''} ago`;
             }
             else if (aliveDiff < UNITS.HOUR) {
-                let diff_reduced = (aliveDiff / UNITS.MINUTE) | 0;
-                aliveTimeStr = `${diff_reduced} minute${diff_reduced > 1 ? 's' : ''} ago`;
+                let diffMinute = (aliveDiff / UNITS.MINUTE) | 0;
+                aliveTimeStr = `${diffMinute} minute${(diffMinute > 1) ? 's' : ''} ago`;
             }
             else if (aliveDiff < UNITS.DAY) {
-                let diff_reduced = (aliveDiff / UNITS.HOUR) | 0;
-                aliveTimeStr = `${diff_reduced} hour${diff_reduced > 1 ? 's' : ''} ago`;
+                let diffHour = (aliveDiff / UNITS.MINUTE) | 0;
+                aliveTimeStr = `${diffHour} hour${(diffHour > 1) ? 's' : ''} ago`;
             }
             else {
                 aliveTimeStr = moment.unix(serverInfo.aliveTime).format('YYYY/MM/DD HH:mm');
             }
 
             let lastUpdateDiff = moment().unix() - serverInfo.lastUpdateTime;
-            let lastUpdateTimeStr = '';
+            let lastUpdateTimeStr = '-';
             if (lastUpdateDiff < UNITS.MINUTE) {
-                lastUpdateTimeStr = `${lastUpdateDiff} second${lastUpdateDiff > 1 ? 's' : ''} ago`;
+                lastUpdateTimeStr = `${lastUpdateDiff} second${(lastUpdateDiff > 1) ? 's' : ''} ago`;
             }
             else if (lastUpdateDiff < UNITS.HOUR) {
-                let diff_reduced = (lastUpdateDiff / UNITS.MINUTE) | 0;
-                lastUpdateTimeStr = `${diff_reduced} minute${diff_reduced > 1 ? 's' : ''} ago`;
+                let diffMinute = (lastUpdateDiff / UNITS.MINUTE) | 0;
+                lastUpdateTimeStr = `${diffMinute} minute${(diffMinute > 1) ? 's' : ''} ago`;
             }
             else if (lastUpdateDiff < UNITS.DAY) {
-                let diff_reduced = (lastUpdateDiff / UNITS.HOUR) | 0;
-                lastUpdateTimeStr = `${diff_reduced} hour${diff_reduced > 1 ? 's' : ''} ago`;
+                let diffHour = (lastUpdateDiff / UNITS.MINUTE) | 0;
+                lastUpdateTimeStr = `${diffHour} hour${(diffHour > 1) ? 's' : ''} ago`;
             }
             else {
                 lastUpdateTimeStr = moment.unix(serverInfo.lastUpdateTime).format('YYYY/MM/DD HH:mm');

@@ -53,8 +53,7 @@
                 status: STATUS.INIT,
                 initTime: time,
                 aliveTime: time,
-                lastPackName: '',
-                lastUpdateTime: time
+                lastUpdateTime: 0
             })
             .then((data) => {
                 return data.insertedId;

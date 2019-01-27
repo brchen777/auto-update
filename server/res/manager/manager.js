@@ -63,7 +63,7 @@
             result.aliveTime = (aliveTime) ? roundTo(aliveTime / 1000, 0) : 0;
 
             // last pack name
-            result.lastPackName = lastPackName || '';
+            result.lastPackName = lastPackName || '-';
 
             // last update time
             result.lastUpdateTime = (lastUpdateTime) ? roundTo(lastUpdateTime / 1000, 0) : 0;
