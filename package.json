@@ -24,6 +24,6 @@
         "round-to": "^3.0.0",
         "shelljs": "^0.8.3",
         "systeminformation": "^3.54.0",
-        "ws": "^6.1.2"
+        "ws": "^6.1.3"
     }
 }
