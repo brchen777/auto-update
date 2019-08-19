@@ -7,8 +7,8 @@
             `<meta charset="UTF-8">`,
             `<meta name="viewport" content="width=device-width, initial-scale=1.0">`,
             
-            `<script src='//res.purimize.com/lib/js/jquery/jquery.min.js'></script>`,
-            `<script src='//res.purimize.com/lib/js/jquery/jquery.tmpl.min.js'></script>`,
+            `<script src='//code.jquery.com/jquery-3.4.1.min.js'></script>`,
+            `<script src='//ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js'></script>`,
             `<script src='//res.purimize.com/lib/js/moment/moment.min.js'></script>`,
             `<script src='//res.purimize.com/lib/js/pump.min.js'></script>`,
             `<script src='//res.purimize.com/lib/js/pipe.min.js'></script>`,

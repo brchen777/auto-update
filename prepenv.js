@@ -11,7 +11,8 @@
     // Load conf
     if (!fs.existsSync(conf)) {
         console.log('No config file existed! Using default...'.red);
-        conf = path.resolve(`${__dirname}/config.default.json`);
+        let defaultConf = path.resolve(`${__dirname}/config.default.json`);
+        conf = Object.assign({}, defaultConf, conf);
     }
 
     if (!shell.which('bash')) {
